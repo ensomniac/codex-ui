@@ -45,6 +45,5 @@ jobs:
                       'diff, provide validation evidence and sign the required approval.\n')
               pr = api(f'repos/{repo}/pulls', {'title': title, 'head': branch, 'base': 'main', 'body': body})
               print(pr['html_url'])
-          subprocess.run(['gh','workflow','run','ci.yml','--repo',repo,'--ref',branch], check=True)
           subprocess.run(['gh','workflow','run','trusted-review.yml','--repo',repo,'--ref','main','-f',f"pr={pr['number']}"], check=True)
           PY
