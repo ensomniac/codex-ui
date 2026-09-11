@@ -1,7 +1,7 @@
 const wheel =
-  "https://github.com/ensomniac/codex-ui/releases/download/v2.0.0/ensomniac_codex_ui-2.0.0-py3-none-any.whl";
+  "https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac_codex_ui-2.0.1-py3-none-any.whl";
 const archive =
-  "https://github.com/ensomniac/codex-ui/releases/download/v2.0.0/ensomniac-codex-ui-2.0.0.tgz";
+  "https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz";
 const installers = {
   installer: [
     "curl -fsSL https://raw.githubusercontent.com/ensomniac/codex-ui/main/install.sh | sh",

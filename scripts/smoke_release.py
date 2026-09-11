@@ -4,6 +4,7 @@ The first public release has no prior wheel, so create a clearly synthetic 0.0.0
 fixture from the released wheel, install it, then run its real upgrade command.
 All installers operate inside a temporary tool directory, never the user's tool.
 """
+import argparse
 import base64
 import csv
 import hashlib
@@ -18,6 +19,7 @@ from urllib.request import urlopen
 import zipfile
 
 from codex_ui.lifecycle import latest_release, wheel_asset
+from codex_ui import __version__
 
 
 def prior_fixture(data: bytes, version: str, target: Path) -> None:
@@ -56,6 +58,11 @@ def run(command: list[str], env: dict) -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--candidate", type=Path, help="Test a locally built updater against the published release")
+    args = parser.parse_args()
+    if args.candidate and args.candidate.is_dir():
+        args.candidate = args.candidate / f"ensomniac_codex_ui-{__version__}-py3-none-any.whl"
     release = latest_release()
     version = release["tag_name"][1:]
     asset = wheel_asset(release)
@@ -66,7 +73,9 @@ def main() -> None:
         root = Path(directory)
         env = {**os.environ, "UV_TOOL_DIR": str(root / "tools"), "UV_TOOL_BIN_DIR": str(root / "bin")}
         fixture = root / "ensomniac_codex_ui-0.0.0-py3-none-any.whl"
-        prior_fixture(data, version, fixture)
+        prior_data = args.candidate.read_bytes() if args.candidate else data
+        prior_version = args.candidate.name.removeprefix("ensomniac_codex_ui-").removesuffix("-py3-none-any.whl") if args.candidate else version
+        prior_fixture(prior_data, prior_version, fixture)
         run(["uv", "tool", "install", "--python", sys._base_executable, str(fixture)], env)
         command = str(root / "bin" / ("codex-ui.exe" if sys.platform == "win32" else "codex-ui"))
         assert run([command, "--version"], env).strip() == "codex-ui 0.0.0"

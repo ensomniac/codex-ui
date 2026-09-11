@@ -81,10 +81,18 @@ class LifecycleTests(unittest.TestCase):
                 lifecycle.version_tuple(value)
 
     def test_pinned_manager_installs_are_replaced_not_reused(self):
-        for manager in ("uv", "pipx"):
-            command = lifecycle.upgrade_command(manager, "/tmp/release.whl")
-            self.assertIn("--force", command)
-            self.assertEqual(command[-1], "/tmp/release.whl")
+        with mock.patch.object(lifecycle.sys, "platform", "darwin"):
+            for manager in ("uv", "pipx"):
+                command = lifecycle.upgrade_command(manager, "/tmp/release.whl")
+                self.assertIn("--force", command)
+                self.assertEqual(command[-1], "/tmp/release.whl")
+
+    def test_windows_upgrade_preserves_the_running_interpreter(self):
+        with mock.patch.object(lifecycle.sys, "platform", "win32"), mock.patch.object(lifecycle.shutil, "which", return_value="uv.exe"):
+            command = lifecycle.upgrade_command("uv", "release.whl")
+        self.assertEqual(command[:3], ["uv", "pip", "install"])
+        self.assertNotIn("--force", command)
+        self.assertIn(lifecycle.sys.executable, command)
 
     def test_skill_replacement_preserves_the_previous_customization(self):
         with tempfile.TemporaryDirectory() as directory:

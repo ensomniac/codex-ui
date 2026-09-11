@@ -32,14 +32,14 @@ Prefer a package manager? Every route has an upgrade path. Public artifacts are 
 
 ```sh
 # uv — isolated, fast, no checkout
-uv tool install 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.0/ensomniac_codex_ui-2.0.0-py3-none-any.whl'
+uv tool install 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac_codex_ui-2.0.1-py3-none-any.whl'
 
 # Homebrew
 brew tap ensomniac/codex-ui https://github.com/ensomniac/codex-ui
 brew install ensomniac/codex-ui/codex-ui
 
 # npm (also available through pnpm, Yarn, Bun and npx)
-npm install -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.0/ensomniac-codex-ui-2.0.0.tgz'
+npm install -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz'
 
 # Upgrade the installed runtime from any supported platform
 codex-ui upgrade --check

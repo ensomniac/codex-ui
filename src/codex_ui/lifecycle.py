@@ -31,8 +31,12 @@ def version_tuple(version: str) -> tuple[int, int, int]:
 
 
 def latest_release() -> dict:
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "codex-ui"}
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     request = Request(f"https://api.github.com/repos/{REPOSITORY}/releases/latest",
-                      headers={"Accept": "application/vnd.github+json", "User-Agent": "codex-ui"})
+                      headers=headers)
     with urlopen(request, timeout=30) as response:
         release = json.load(response)
     version_tuple(release["tag_name"])
@@ -69,6 +73,13 @@ def manager() -> str:
 def upgrade_command(method: str, wheel: str) -> list[str]:
     if method == "homebrew":
         return ["brew", "upgrade", "ensomniac/codex-ui/codex-ui"]
+    if sys.platform == "win32":
+        # Keep the running interpreter in place. Recreating a tool environment
+        # tries to remove its locked Scripts/python.exe on Windows. The public
+        # launcher remains a stable import of codex_ui.cli:main.
+        if shutil.which("uv"):
+            return ["uv", "pip", "install", "--python", sys.executable, "--upgrade", wheel]
+        return [sys.executable, "-m", "pip", "install", "--upgrade", wheel]
     if method == "pipx":
         # Reinstall a direct wheel requirement; `pipx upgrade` preserves old URL pins.
         return ["pipx", "install", "--force", "--python", sys._base_executable, wheel]
