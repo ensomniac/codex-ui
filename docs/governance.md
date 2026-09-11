@@ -27,7 +27,7 @@ GitHub forbids approving your own PR. Contributor PRs use the contributor's iden
 
 This workflow runs only in the upstream repository on an ensomniac push. Its token has contents read, pull-requests write, and actions write to start the required checks, with no local signing key. The repository must enable GitHub Actions PR creation; that GitHub setting also permits bot review submission, but such a review cannot satisfy either of this repository's trusted approval requirements. Default workflow permissions remain read-only.
 
-GitHub may hold event-triggered workflows for bot-created PRs. The submission workflow explicitly dispatches `ci.yml` for the branch and `trusted-review.yml` on main, so the required checks start without waiting for that additional CI approval. The protected signed-review path is unchanged.
+GitHub may hold event-triggered workflows for bot-created PRs. On PR creation, the submission workflow explicitly dispatches `ci.yml` for the branch and `trusted-review.yml` on main, so the required checks start without waiting for that additional CI approval. Subsequent owner pushes use the normal PR events and do not start a duplicate CI matrix. The protected signed-review path is unchanged.
 
 ## Ryan's fast path
 

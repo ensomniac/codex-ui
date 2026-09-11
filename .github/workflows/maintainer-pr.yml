@@ -35,6 +35,7 @@ jobs:
           if prs:
               pr = prs[0]
               print(pr['html_url'])
+              raise SystemExit(0)  # Owner pushes already trigger normal PR checks.
           else:
               commit = api(f'repos/{repo}/commits/{os.environ["SOURCE_SHA"]}')
               title = commit['commit']['message'].splitlines()[0]
