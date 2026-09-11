@@ -51,7 +51,7 @@ jobs:
           wheel = next(Path('dist').glob('*.whl'))
           digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
           assert digest in Path('Formula/codex-ui.rb').read_text(), 'Formula wheel hash differs from release build'
-          files = sorted(Path('dist').iterdir())
+          files = sorted(p for p in Path('dist').iterdir() if p.is_file() and not p.name.startswith('.'))
           Path('dist/SHA256SUMS').write_text(''.join(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n' for p in files))
           PY
       - name: Publish immutable versioned artifacts

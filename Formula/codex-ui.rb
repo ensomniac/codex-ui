@@ -7,7 +7,9 @@ class CodexUi < Formula
   version "2.0.0"
   license "MIT"
   depends_on :macos
-  depends_on macos: :ventura
+  on_macos do
+    depends_on macos: :ventura
+  end
   depends_on "python@3.12"
   depends_on "uv"
 

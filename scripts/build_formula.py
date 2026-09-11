@@ -33,7 +33,9 @@ class CodexUi < Formula
   version "{__version__}"
   license "MIT"
   depends_on :macos
-  depends_on macos: :ventura
+  on_macos do
+    depends_on macos: :ventura
+  end
   depends_on "python@3.12"
   depends_on "uv"
 
