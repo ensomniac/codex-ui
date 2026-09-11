@@ -1,1 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 390" role="img" aria-label="codex-ui. Your agent. Your computer. Full control."><rect width="1200" height="390" fill="#f0f0e8"/><rect x="54" y="49" width="54" height="54" fill="#1c211b"/><path d="m69 88 24-24M71 64h22v22" stroke="#c1f85a" stroke-width="4" fill="none"/><text x="124" y="90" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" letter-spacing="-2" fill="#1c211b">codex-ui</text><text x="55" y="200" font-family="Arial,Helvetica,sans-serif" font-size="64" letter-spacing="-3" fill="#1c211b">Your agent. Your computer.</text><rect x="54" y="276" width="352" height="13" fill="#c1f85a"/><text x="55" y="275" font-family="Arial,Helvetica,sans-serif" font-size="64" letter-spacing="-3" fill="#1c211b">Full control.</text><text x="57" y="341" font-family="monospace" font-size="13" letter-spacing="2" fill="#65705a">OPEN SOURCE · BY ENSOMNIAC · MAINTAINED WITH AGENTS</text><path d="m975 280 130-130M981 150h124v124" stroke="#1c211b" stroke-width="15" fill="none"/></svg>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="960"
+  height="300"
+  viewBox="0 0 960 300"
+  role="img"
+  aria-label="codex-ui. Desktop control for your agent."
+>
+  <rect width="960" height="300" rx="24" fill="#f5f5f7" />
+  <g transform="translate(64 63)">
+    <rect width="64" height="64" rx="16" fill="#171719" />
+    <path
+      d="M26 16H20a4 4 0 0 0-4 4v24a4 4 0 0 0 4 4h6M38 16h6a4 4 0 0 1 4 4v6"
+      fill="none"
+      stroke="#fff"
+      stroke-width="3.5"
+      stroke-linecap="round"
+    />
+    <path
+      d="m30 29 19 9-8 3-3 8z"
+      fill="#fff"
+      stroke="#fff"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+    />
+  </g>
+  <text
+    x="149"
+    y="108"
+    font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif"
+    font-size="42"
+    font-weight="600"
+    letter-spacing="-1.5"
+    fill="#171719"
+  >
+    codex-ui
+  </text>
+  <text
+    x="64"
+    y="211"
+    font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif"
+    font-size="42"
+    letter-spacing="-1.5"
+    fill="#171719"
+  >
+    Desktop control for your agent.
+  </text>
+  <text
+    x="65"
+    y="250"
+    font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif"
+    font-size="17"
+    fill="#66666c"
+  >
+    An open-source project by Ensomniac.
+  </text>
+</svg>

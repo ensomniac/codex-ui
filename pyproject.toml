@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "ensomniac-codex-ui"
 dynamic = ["version"]
-description = "Your agent. Your computer. Full control. Native desktop eyes and hands."
+description = "Native desktop control for agents."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

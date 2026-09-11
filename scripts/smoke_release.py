@@ -1,8 +1,8 @@
-"""Exercise a real uv install and upgrade against public release artifacts.
+"""Verify fresh installation and upgrades using real GitHub release artifacts.
 
-The first public release has no prior wheel, so create a clearly synthetic 0.0.0
-fixture from the released wheel, install it, then run its real upgrade command.
-All installers operate inside a temporary tool directory, never the user's tool.
+Candidate preflight uses an explicit synthetic version to exercise its updater.
+Post-publication checks install the actual previous release and upgrade it.
+Every tool environment is temporary and independent of the maintainer's CLI.
 """
 import argparse
 import base64
@@ -15,10 +15,10 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 import zipfile
 
-from codex_ui.lifecycle import latest_release, wheel_asset
+from codex_ui.lifecycle import REPOSITORY, latest_release, version_tuple, wheel_asset
 from codex_ui import __version__
 
 
@@ -57,40 +57,82 @@ def run(command: list[str], env: dict) -> str:
     return result.stdout
 
 
+def select_previous(releases: list[dict], current: str) -> dict:
+    candidates = []
+    for release in releases:
+        if release.get("draft") or release.get("prerelease"):
+            continue
+        try:
+            value = version_tuple(release["tag_name"])
+        except (ValueError, KeyError, RuntimeError):
+            continue
+        if value < version_tuple(current):
+            candidates.append(release)
+    if not candidates:
+        raise RuntimeError("No actual previous stable release is available")
+    return max(candidates, key=lambda release: version_tuple(release["tag_name"]))
+
+
+def previous_release(current: str) -> dict:
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "codex-ui-release-check"}
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    request = Request(f"https://api.github.com/repos/{REPOSITORY}/releases?per_page=100", headers=headers)
+    with urlopen(request, timeout=30) as response:
+        return select_previous(json.load(response), current)
+
+
+def download(release: dict) -> bytes:
+    asset = wheel_asset(release)
+    with urlopen(asset["browser_download_url"], timeout=60) as response:
+        data = response.read()
+    assert "sha256:" + hashlib.sha256(data).hexdigest() == asset["digest"]
+    return data
+
+
+def install(root: Path, wheel: Path) -> tuple[str, dict]:
+    env = {**os.environ, "UV_TOOL_DIR": str(root / "tools"), "UV_TOOL_BIN_DIR": str(root / "bin")}
+    run(["uv", "tool", "install", "--python", sys._base_executable, str(wheel)], env)
+    command = str(root / "bin" / ("codex-ui.exe" if sys.platform == "win32" else "codex-ui"))
+    return command, env
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--candidate", type=Path, help="Test a locally built updater against the published release")
+    parser.add_argument("--candidate", type=Path, help="Exercise a locally built updater against the current release")
     args = parser.parse_args()
     if args.candidate and args.candidate.is_dir():
         args.candidate = args.candidate / f"ensomniac_codex_ui-{__version__}-py3-none-any.whl"
     release = latest_release()
     version = release["tag_name"][1:]
-    asset = wheel_asset(release)
-    with urlopen(asset["browser_download_url"], timeout=60) as response:
-        data = response.read()
-    assert "sha256:" + hashlib.sha256(data).hexdigest() == asset["digest"]
     with tempfile.TemporaryDirectory(prefix="codex-ui-release-smoke-") as directory:
         root = Path(directory)
-        env = {**os.environ, "UV_TOOL_DIR": str(root / "tools"), "UV_TOOL_BIN_DIR": str(root / "bin")}
-        fixture = root / "ensomniac_codex_ui-0.0.0-py3-none-any.whl"
-        prior_data = args.candidate.read_bytes() if args.candidate else data
-        prior_version = args.candidate.name.removeprefix("ensomniac_codex_ui-").removesuffix("-py3-none-any.whl") if args.candidate else version
-        prior_fixture(prior_data, prior_version, fixture)
-        run(["uv", "tool", "install", "--python", sys._base_executable, str(fixture)], env)
-        command = str(root / "bin" / ("codex-ui.exe" if sys.platform == "win32" else "codex-ui"))
-        assert run([command, "--version"], env).strip() == "codex-ui 0.0.0"
+        current = root / wheel_asset(release)["name"]
+        current.write_bytes(download(release))
+        fresh, fresh_env = install(root / "fresh", current)
+        assert run([fresh, "--version"], fresh_env).strip() == f"codex-ui {version}"
+        assert json.loads(run([fresh, "capabilities"], fresh_env))["lifecycle"]["upgrade"]
+        if args.candidate:
+            prior_version = "0.0.0"
+            prior = root / "ensomniac_codex_ui-0.0.0-py3-none-any.whl"
+            candidate_version = args.candidate.name.removeprefix("ensomniac_codex_ui-").removesuffix("-py3-none-any.whl")
+            prior_fixture(args.candidate.read_bytes(), candidate_version, prior)
+        else:
+            previous = previous_release(release["tag_name"])
+            prior_version = previous["tag_name"][1:]
+            prior = root / wheel_asset(previous)["name"]
+            prior.write_bytes(download(previous))
+        command, env = install(root / "upgrade", prior)
+        assert run([command, "--version"], env).strip() == f"codex-ui {prior_version}"
         result = json.loads(run([command, "upgrade"], env))
         assert result["updated"] and result["installed_version"] == version, result
         assert run([command, "--version"], env).strip() == f"codex-ui {version}"
-        # A candidate preflight installs the *previous* release. Do not test that
-        # older release's API client again (2.0.0 cannot use CI's GitHub token).
-        # The post-publication run always verifies the newly shipped --check.
-        if not args.candidate:
-            assert not json.loads(run([command, "upgrade", "--check"], env))["update_available"]
-        capabilities = json.loads(run([command, "capabilities"], env))
-        assert capabilities["lifecycle"]["upgrade"]
-        print(json.dumps({"ok": True, "platform": sys.platform, "fixture_version": "0.0.0",
-                          "installed_release": version, "actual_upgrade": True}))
+        assert not json.loads(run([command, "upgrade", "--check"], env))["update_available"]
+        assert json.loads(run([command, "capabilities"], env))["lifecycle"]["upgrade"]
+        print(json.dumps({"ok": True, "platform": sys.platform, "from_version": prior_version,
+                          "installed_release": version, "fresh_install": True,
+                          "synthetic_candidate": bool(args.candidate), "actual_upgrade": True}))
 
 
 if __name__ == "__main__":

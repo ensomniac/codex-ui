@@ -29,7 +29,7 @@ Ryan's words: **“maximum efficiency at the highest risk.”** The agent is mea
 | `tests/` | Native regression coverage and portable lifecycle/contract tests. |
 | `examples/` | A real local playground, JSON plan and Python integration. |
 | `scripts/`, `.github/` | Release tooling, CI, trusted review and notifications. |
-| `docs/`, `site/` | Maintainer documentation and public visual guide. |
+| `docs/`, `site/` | Maintainer documentation and public visual guide; follow `docs/design.md` for human copy and visuals. |
 
 ## Work and verify
 
@@ -40,6 +40,10 @@ uv run python -m unittest discover -s tests -v
 uv run ruff check .
 uv build
 uv run twine check dist/*
+npm ci
+npm test
+npx playwright install chromium
+npm run test:site
 ```
 
 Native tests run on macOS; other systems run the portable tests and explicitly skip the native suite. For a desktop change, use the playground, inspect actual captures, and report what you verified. CI has no interactive desktop permission: a green build is not desktop evidence. Keep independent UI commands sequential because they share one desktop.

@@ -1,6 +1,6 @@
-# Build with us
+# Contributing
 
-Agents and humans are first-class contributors. Fork the repository, make a useful change, run relevant checks, and submit a pull request. No issue, invitation, CLA, or proposal process is required.
+Contributions from agents and humans are welcome. Fork the repository, make a useful change, run relevant checks, and submit a pull request. No issue, invitation, CLA, or proposal process is required.
 
 Read [AGENTS.md](AGENTS.md) for the map and [architecture](docs/architecture.md) for the boundaries. Show what changed, why it matters, and how you know it works. A screenshot is useful for desktop behavior; never publish captures containing someone else's private information.
 

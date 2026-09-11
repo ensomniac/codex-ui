@@ -18,18 +18,18 @@ irm https://raw.githubusercontent.com/ensomniac/codex-ui/main/install.ps1 | iex
 
 ## Package managers
 
-Use the current version's wheel URL from [Releases](https://github.com/ensomniac/codex-ui/releases/latest). These are working 2.0.1 examples:
+Use the current version's wheel URL from [Releases](https://github.com/ensomniac/codex-ui/releases/latest). The commands below use the current release:
 
 ```sh
 # uv
-uv tool install 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac_codex_ui-2.0.1-py3-none-any.whl'
+uv tool install 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac_codex_ui-2.1.0-py3-none-any.whl'
 
 # pipx
-pipx install 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac_codex_ui-2.0.1-py3-none-any.whl'
+pipx install 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac_codex_ui-2.1.0-py3-none-any.whl'
 
 # pip, in an environment you own
 python3 -m venv ~/.local/share/codex-ui/venv
-~/.local/share/codex-ui/venv/bin/python -m pip install 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac_codex_ui-2.0.1-py3-none-any.whl'
+~/.local/share/codex-ui/venv/bin/python -m pip install 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac_codex_ui-2.1.0-py3-none-any.whl'
 ~/.local/share/codex-ui/venv/bin/codex-ui doctor
 
 # Homebrew: this repository is also its own tap
@@ -40,11 +40,11 @@ brew install ensomniac/codex-ui/codex-ui
 JavaScript managers use a small bridge that prepares an isolated Python environment on first execution. **Install uv or Python 3.11+ first.** No npm postinstall script runs. The released npm archive includes the matching wheel. The bridge works with node 18+ and caches its runtime under `~/.local/share/codex-ui/npm-runtime`; override with `CODEX_UI_NODE_RUNTIME`.
 
 ```sh
-npm install -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz'
-pnpm add -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz'
-yarn global add 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz'
-bun add -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz'
-npx --yes --package='https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz' codex-ui --version
+npm install -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac-codex-ui-2.1.0.tgz'
+pnpm add -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac-codex-ui-2.1.0.tgz'
+yarn global add 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac-codex-ui-2.1.0.tgz'
+bun add -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac-codex-ui-2.1.0.tgz'
+npx --yes --package='https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac-codex-ui-2.1.0.tgz' codex-ui --version
 ```
 
 `yarn global` applies to Yarn Classic; modern Yarn uses `yarn dlx --package <tarball-url> codex-ui --version`. npm/pnpm/Bun also require their usual global-bin directory on PATH. None of these commands publishes anything to a registry.

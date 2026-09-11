@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guide — codex-ui</title>
+    <meta
+      name="description"
+      content="Install codex-ui, connect your agent, choose a window and verify your first desktop action. Commands, examples and troubleshooting."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link
+      rel="canonical"
+      href="https://ensomniac.github.io/codex-ui/guide.html"
+    />
+    <link rel="stylesheet" href="style.css?v=2.1.0" />
+    <script src="site.js?v=2.1.0" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="./" aria-label="codex-ui home"
+          ><img src="icon.svg" width="28" height="28" alt="" /><span
+            >codex-ui</span
+          ></a
+        >
+        <nav aria-label="Main navigation">
+          <a href="guide.html" aria-current="page">Guide</a
+          ><a href="index.html#agents">For agents</a
+          ><a class="nav-install" href="index.html#install">Install</a>
+        </nav>
+      </div>
+    </header>
+    <div class="shell guide-layout">
+      <aside class="guide-sidebar">
+        <p>Using codex-ui</p>
+        <nav aria-label="On this page">
+          <a href="#install">Install and check</a
+          ><a href="#agents">Connect an agent</a
+          ><a href="#first-action">Your first action</a
+          ><a href="#targets">Choose a target</a
+          ><a href="#inspect">Observe and inspect</a
+          ><a href="#plans">Run a plan</a
+          ><a href="#how-it-works">How control works</a
+          ><a href="#updates">Update and remove</a
+          ><a href="#troubleshooting">Troubleshooting</a>
+        </nav>
+      </aside>
+      <main class="guide-content" id="main">
+        <div class="guide-title">
+          <p class="overline">The guide</p>
+          <h1>A command line<br />for your desktop.</h1>
+          <p>
+            Install the tool, give your agent the context, and try one action on
+            a page you can inspect.
+          </p>
+        </div>
+        <section id="install">
+          <h2>Install and check</h2>
+          <p>
+            Native desktop control requires <strong>macOS 13 or later</strong>,
+            on Apple Silicon or Intel. Run this in Terminal:
+          </p>
+          <div class="code-block">
+            <pre><code id="guide-installer">curl -fsSL https://raw.githubusercontent.com/ensomniac/codex-ui/main/install.sh | sh</code></pre>
+            <button
+              class="copy-button"
+              data-copy="guide-installer"
+              type="button"
+              hidden
+            >
+              Copy command
+            </button>
+          </div>
+          <p>
+            The installer supplies uv if needed and creates an isolated Python
+            environment. Open a new terminal if <code>codex-ui</code> is not yet
+            on your path, then check desktop access:
+          </p>
+          <div class="code-block">
+            <pre><code>codex-ui doctor</code></pre>
+          </div>
+          <p>
+            <code>doctor</code> reports Accessibility and screen-capture
+            availability, the current displays, and the running Python
+            interpreter. An unhealthy check returns a nonzero exit code.
+          </p>
+          <p>
+            macOS may ask for Accessibility, Screen Recording or Automation
+            access for your terminal or agent host. Grant the access the system
+            requests, then run the check again. codex-ui adds no per-action
+            permission prompt.
+          </p>
+          <p>
+            Prefer a package manager?
+            <a href="index.html#install">Homebrew, uv and npm</a> are shown on
+            the main page. The repository has
+            <a
+              href="https://github.com/ensomniac/codex-ui/blob/main/docs/install.md"
+              >all installation paths</a
+            >, including pipx, pip, pnpm, Yarn, Bun and portable Windows
+            installation.
+          </p>
+        </section>
+        <section id="agents">
+          <h2>Connect an agent</h2>
+          <p>
+            The bundled skill teaches your agent the commands, target selectors,
+            screenshot geometry and verification workflow.
+          </p>
+          <div class="code-block">
+            <pre><code id="guide-skill">codex-ui skill install</code></pre>
+            <button
+              class="copy-button"
+              data-copy="guide-skill"
+              type="button"
+              hidden
+            >
+              Copy command
+            </button>
+          </div>
+          <p>
+            This installs the skill for Codex. For Claude, run
+            <code>codex-ui skill install --agent claude</code>. For another
+            host, use <code>--path /your/skills/control-local-ui</code>, or
+            provide the agent with the
+            <a
+              href="https://github.com/ensomniac/codex-ui/blob/main/docs/commands.md"
+              >command reference</a
+            >.
+          </p>
+          <p>
+            Any agent that can run a local command and inspect an image can use
+            codex-ui. <code>codex-ui schema</code> describes the CLI;
+            <code>codex-ui capabilities</code> reports platform support. Desktop
+            work runs in the account and session that launched the command.
+          </p>
+        </section>
+        <section id="first-action">
+          <h2>Your first action</h2>
+          <p>
+            Open the <a href="index.html">codex-ui home page</a> in Chrome. Its
+            example has a real button named <strong>Mark reviewed</strong>. Ask
+            your agent to run:
+          </p>
+          <div class="code-block">
+            <pre><code id="guide-action">codex-ui press \
+  --chrome-url 'ensomniac.github.io/codex-ui/' \
+  --role button \
+  --name 'Mark reviewed' \
+  --capture-after</code></pre>
+            <button
+              class="copy-button"
+              data-copy="guide-action"
+              type="button"
+              hidden
+            >
+              Copy command
+            </button>
+          </div>
+          <p>
+            The example should change from “Not reviewed” to “Reviewed,” and its
+            activation count should increase by one. The command returns a
+            capture path; have your agent open that image and inspect the
+            changed state.
+          </p>
+          <div class="guide-callout">
+            <p>
+              <code>ok: true</code> means the command completed. The page state
+              and captured image establish whether the intended result happened.
+            </p>
+          </div>
+          <p>
+            The example changes only this page. For a local test surface, clone
+            the repository and open <code>examples/playground.html</code> in
+            Chrome.
+          </p>
+        </section>
+        <section id="targets">
+          <h2>Choose a target</h2>
+          <p>
+            Use a distinctive selector. If several windows or controls match,
+            narrow it before acting.
+          </p>
+          <div class="code-block">
+            <pre><code>codex-ui windows --app 'Google Chrome'
+codex-ui windows --app TextEdit</code></pre>
+          </div>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th>Selector</th>
+                <th>Use it for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>--chrome-url</code></td>
+                <td>
+                  A literal URL substring, including a local
+                  <code>file://</code> page.
+                </td>
+              </tr>
+              <tr>
+                <td><code>--window-id</code></td>
+                <td>A window ID returned by <code>windows</code>.</td>
+              </tr>
+              <tr>
+                <td><code>--app</code> + <code>--title</code></td>
+                <td>A native application and a distinctive window title.</td>
+              </tr>
+              <tr>
+                <td><code>--display</code></td>
+                <td>
+                  A screen capture using a display index from
+                  <code>doctor</code>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Chrome targeting prefers matching active tabs, then searches
+            background tabs. Use a URL specific to the page you intend. Verify
+            the returned target when multiple tabs share a path.
+          </p>
+        </section>
+        <section id="inspect">
+          <h2>Observe, then act</h2>
+          <p>
+            Capture the target and inspect its controls before choosing an
+            action.
+          </p>
+          <div class="code-block">
+            <pre><code>codex-ui capture --chrome-url 'your-project/index.html' --label before
+codex-ui inspect --chrome-url 'your-project/index.html' --search Save --all
+codex-ui press --chrome-url 'your-project/index.html' \
+  --role button --name 'Save changes' --capture-after</code></pre>
+          </div>
+          <p>
+            Prefer a named control when available. Coordinates can be given as
+            desktop points, window-relative points or screenshot pixels with the
+            capture metadata. The
+            <a
+              href="https://github.com/ensomniac/codex-ui/blob/main/docs/commands.md"
+              >full reference</a
+            >
+            covers clicking, dragging, scrolling, typing and window layouts.
+          </p>
+          <h3>Chrome inspection</h3>
+          <div class="code-block">
+            <pre><code>codex-ui chrome-dom --chrome-url 'your-project/index.html' \
+  --selector '#app' --depth 2
+codex-ui chrome-console --chrome-url 'your-project/index.html' --level error
+codex-ui chrome-eval --chrome-url 'your-project/index.html' \
+  '({title: document.title, ready: document.readyState})'</code></pre>
+          </div>
+          <p>
+            These commands use DevTools in the Chrome profile already open. They
+            preserve the clipboard and normally restore the panel layout.
+            Console results depend on the visible entries and current filters;
+            unreadable rows do not establish that a page has no errors.
+          </p>
+        </section>
+        <section id="plans">
+          <h2>Run related actions together</h2>
+          <p>
+            A JSON plan keeps related actions in one visible control session.
+            Save this as <code>review.json</code> with the home page open in
+            Chrome:
+          </p>
+          <div class="code-block">
+            <pre><code id="guide-plan">{
+  "schema_version": 1,
+  "target": {"chrome_url": "ensomniac.github.io/codex-ui/"},
+  "actions": [
+    {"type": "press", "role": "button", "name": "Mark reviewed"},
+    {"type": "capture", "label": "reviewed"}
+  ]
+}</code></pre>
+            <button
+              class="copy-button"
+              data-copy="guide-plan"
+              type="button"
+              hidden
+            >
+              Copy plan
+            </button>
+          </div>
+          <div class="code-block">
+            <pre><code>codex-ui run --plan-file review.json</code></pre>
+          </div>
+          <p>
+            Re-observe when the next action depends on an uncertain result. Keep
+            separate desktop commands sequential; they share your mouse,
+            keyboard and focus. The
+            <a href="plan.schema.json">plan schema</a> lists the supported
+            actions.
+          </p>
+        </section>
+        <section id="how-it-works">
+          <h2>How control works</h2>
+          <p>
+            codex-ui uses macOS Accessibility, Quartz and Cocoa to work with the
+            actual desktop. It has no separate browser profile, remote daemon,
+            account or telemetry service.
+          </p>
+          <ul>
+            <li>
+              <strong>Visible activity:</strong> blue while observing, red while
+              controlling, amber when yielding to physical input, and green on
+              completion.
+            </li>
+            <li>
+              <strong>Shared input:</strong> the tool pauses when you use the
+              mouse or keyboard and resumes after three quiet seconds.
+            </li>
+            <li>
+              <strong>Pointer restoration:</strong> control sessions restore the
+              pointer, including after failure.
+            </li>
+            <li>
+              <strong>Correct geometry:</strong> screenshot sidecars record the
+              screen rectangle and scale. Retina pixels and global desktop
+              points are different units.
+            </li>
+          </ul>
+          <p>
+            The tool uses the authority of your local account. Your instructions
+            and your agent host determine the scope of the work. It does not
+            bypass operating-system protections.
+          </p>
+        </section>
+        <section id="updates">
+          <h2>Update or remove</h2>
+          <div class="code-block">
+            <pre><code id="guide-upgrade">codex-ui upgrade --check
+codex-ui upgrade
+codex-ui skill install</code></pre>
+            <button
+              class="copy-button"
+              data-copy="guide-upgrade"
+              type="button"
+              hidden
+            >
+              Copy commands
+            </button>
+          </div>
+          <p>
+            The updater checks the latest stable GitHub release, verifies its
+            wheel digest, and updates the environment that owns the command.
+            Homebrew installations use the tap’s pinned formula. The skill is
+            refreshed separately so local customizations can be backed up.
+          </p>
+          <p>
+            Direct release URLs are pinned. A generic package-manager update may
+            keep an old URL. Use <code>codex-ui upgrade</code>, or install a
+            newer release URL. JavaScript users can update the bridge itself by
+            reinstalling its new release archive.
+          </p>
+          <p>
+            To remove an installation made by the recommended installer, run
+            <code>uv tool uninstall ensomniac-codex-ui</code>. Screenshots and
+            installed skills are kept. See
+            <a
+              href="https://github.com/ensomniac/codex-ui/blob/main/docs/install.md#uninstall-or-recover"
+              >uninstall and recovery</a
+            >
+            for other managers.
+          </p>
+        </section>
+        <section id="troubleshooting">
+          <h2>Troubleshooting</h2>
+          <h3>“No window matched” or more than one match</h3>
+          <p>
+            Run <code>codex-ui windows --app 'Google Chrome'</code> and inspect
+            the list. Use a more specific URL or exact window ID. Restore a
+            minimized window before capturing it.
+          </p>
+          <h3>Desktop access is unavailable</h3>
+          <p>
+            Run <code>doctor</code> and check macOS Privacy &amp; Security
+            settings for the host running the command. A changed Python runtime
+            can have different permission attribution. Restart the host if macOS
+            requests it.
+          </p>
+          <h3>The command is waiting</h3>
+          <p>
+            An amber indicator means it detected physical input. Leave the mouse
+            and keyboard quiet for three seconds. Use the reported state to
+            diagnose a failure; do not treat an observation timeout as proof
+            that the process stopped.
+          </p>
+          <h3>The command ran, but the page did not change</h3>
+          <p>
+            Inspect the capture and returned target. Confirm the control’s name,
+            role and enabled state with <code>inspect</code>. Report the
+            command, version, actual result and relevant environment in a
+            <a href="https://github.com/ensomniac/codex-ui/issues/new/choose"
+              >bug report</a
+            >.
+          </p>
+          <h3>Windows or Linux reports no desktop backend</h3>
+          <p>
+            That is the current support boundary. Installation, upgrades, schema
+            and skills are available; native desktop control is
+            <a
+              href="https://github.com/ensomniac/codex-ui/blob/main/docs/platforms.md"
+              >planned</a
+            >.
+          </p>
+        </section>
+        <p class="copy-message" id="copy-message" role="status"></p>
+      </main>
+    </div>
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <a class="brand" href="./"
+          ><img src="icon.svg" width="24" height="24" alt="" /><span
+            >codex-ui</span
+          ></a
+        >
+        <p>By Ensomniac. Built and maintained with agents.</p>
+        <nav aria-label="Footer">
+          <a
+            href="https://github.com/ensomniac/codex-ui/blob/main/docs/commands.md"
+            >Reference</a
+          ><a href="https://github.com/ensomniac/codex-ui">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
