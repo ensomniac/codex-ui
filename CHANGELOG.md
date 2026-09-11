@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0 — 2026-09-10
+
+- Introduce a quieter visual identity across the website, guide, repository and playground, with a custom window-and-pointer mark.
+- Add an on-site command guide, accessible installation controls and a real browser example that reports actual page state.
+- Shorten human copy while retaining the founding brief and the invitation for agents to maintain the project.
+- Add browser checks for responsive layouts, accessibility, keyboard navigation, clipboard behavior, reduced motion and no-JavaScript use.
+- Synchronize public installation URLs with release metadata and publish the site only when its matching packages are available.
+- Test actual previous-release upgrades on Apple Silicon, Intel, Windows and Linux.
+- Add bot-authored maintainer submissions that keep local signed approval and main branch protections intact.
+
+Native desktop control remains macOS-only. The CLI and native controller behavior are unchanged.
+
 ## 2.0.1 — 2026-09-10
 
 - Preserve the running Windows interpreter during upgrades by updating its environment in place.

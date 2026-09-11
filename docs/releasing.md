@@ -1,8 +1,8 @@
-# Release a complete product
+# Releases
 
 Only the trusted maintainer operates releases. Do not publish from an unreviewed branch.
 
-1. Update `src/codex_ui/_version.py` and `CHANGELOG.md`. Update visible pinned install examples. Run `uv run python scripts/prepare.py` to sync the npm manifest and bundled skill.
+1. Update `src/codex_ui/_version.py` and `CHANGELOG.md`. Run `uv run python scripts/prepare.py` to sync npm metadata, public install URLs and the bundled skill.
 2. Run the documented checks, inspect the playground for native behavior changes, build the wheel and source distribution, then run `npm pack --pack-destination dist`.
 3. Generate the Homebrew formula with `uv run python scripts/build_formula.py`. It pins the released wheel and every universal2 PyObjC wheel with SHA-256 and installs dependencies offline. Commit the formula alongside the release change.
 4. Merge through the trusted review process. After CI passes on main, run `gh workflow run release.yml -f version=X.Y.Z`. The workflow verifies the version on main and its successful CI check before creating the tag/release. GitHub credentials stay in the maintainer context.
@@ -12,4 +12,6 @@ Only the trusted maintainer operates releases. Do not publish from an unreviewed
 
 The release workflow publishes GitHub artifacts today. PyPI/npm registry trusted publishing can be added after the maintainer connects those identities. Keep docs explicit about which channels are actually live.
 
-The **Released install and upgrade** workflow runs after publication on Apple Silicon, Intel, Windows and Linux. It downloads and verifies the public wheel, installs a synthetic `0.0.0` fixture in a temporary uv tool directory, runs the real `upgrade` command against GitHub, and verifies the installed release. The synthetic fixture is explicit because the first public release has no earlier published wheel. Subsequent releases should also retain evidence for upgrades from the actual previous release.
+The **Released install and upgrade** workflow runs after publication on Apple Silicon, Intel, Windows and Linux. It downloads and verifies the current and actual previous stable wheels, installs each in separate temporary uv tool directories, and runs the previous release's real `upgrade` command. It checks the final version, capabilities and no-update result. A separate pre-publication candidate check uses an explicitly synthetic version to exercise the candidate updater against the current public release. These are different checks; the synthetic fixture does not establish an N−1 → N upgrade.
+
+`npm run test:site` checks the home page and guide at four widths, plus real demo state, clipboard paths, keyboard tabs, no-JavaScript access, reduced motion, local links and automated accessibility rules. Use `node scripts/capture_site.cjs` for local review captures and inspect them. Native Chrome interaction remains a separate acceptance check.

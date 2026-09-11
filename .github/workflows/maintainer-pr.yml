@@ -1,0 +1,49 @@
+name: Maintainer submission
+on:
+  push:
+    branches: ['maintainer/**']
+permissions:
+  contents: read
+  pull-requests: write
+  actions: write
+concurrency:
+  group: maintainer-pr-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  submit:
+    if: github.repository == 'ensomniac/codex-ui' && github.actor == 'ensomniac'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open or locate the bot-authored pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_BRANCH: ${{ github.ref_name }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          repo = 'ensomniac/codex-ui'
+          branch = os.environ['SOURCE_BRANCH']
+          def api(endpoint, value=None):
+              args = ['gh', 'api', endpoint]
+              if value is not None:
+                  args += ['--input', '-']
+              result = subprocess.run(args, input=json.dumps(value) if value else None,
+                                      capture_output=True, text=True, check=True)
+              return json.loads(result.stdout)
+          prs = api(f'repos/{repo}/pulls?state=open&base=main&head=ensomniac:{branch}')
+          if prs:
+              pr = prs[0]
+              print(pr['html_url'])
+          else:
+              commit = api(f'repos/{repo}/commits/{os.environ["SOURCE_SHA"]}')
+              title = commit['commit']['message'].splitlines()[0]
+              body = ('Submitted by the maintainer automation for Ryan / Ensomniac.\n\n'
+                      'The branch was pushed by ensomniac. This bot opens the PR; it does not review, '
+                      'approve or merge it. Ryan\'s locally operated agent must inspect the final '
+                      'diff, provide validation evidence and sign the required approval.\n')
+              pr = api(f'repos/{repo}/pulls', {'title': title, 'head': branch, 'base': 'main', 'body': body})
+              print(pr['html_url'])
+          subprocess.run(['gh','workflow','run','ci.yml','--repo',repo,'--ref',branch], check=True)
+          subprocess.run(['gh','workflow','run','trusted-review.yml','--repo',repo,'--ref','main','-f',f"pr={pr['number']}"], check=True)
+          PY

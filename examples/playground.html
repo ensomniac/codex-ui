@@ -1,92 +1,166 @@
 <!doctype html>
 <html lang="en">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>codex-ui Playground</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      font-family: system-ui, sans-serif;
-      background: #11130f;
-      color: #f1f1e9;
-    }
-    body {
-      max-width: 760px;
-      margin: 10vh auto;
-      padding: 32px;
-    }
-    .eyebrow {
-      font: 12px monospace;
-      letter-spacing: 0.18em;
-      color: #ccff69;
-    }
-    h1 {
-      font-size: clamp(40px, 8vw, 72px);
-      line-height: 1;
-      letter-spacing: -0.06em;
-    }
-    p {
-      line-height: 1.6;
-      color: #b9bdb1;
-    }
-    label {
-      display: block;
-      margin: 30px 0 10px;
-    }
-    input,
-    button {
-      font: inherit;
-      padding: 16px;
-      border: 1px solid #555c49;
-      border-radius: 8px;
-    }
-    input {
-      background: #25291f;
-      color: white;
-      width: min(90%, 400px);
-    }
-    button {
-      display: block;
-      margin: 24px 0;
-      background: #ccff69;
-      color: #19220a;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    button:focus-visible,
-    input:focus-visible {
-      outline: 3px solid #fff;
-      outline-offset: 4px;
-    }
-    output {
-      display: block;
-      border-top: 1px solid #434938;
-      padding-top: 24px;
-      font: 14px monospace;
-      color: #ccff69;
-    }
-  </style>
-  <main id="playground">
-    <p class="eyebrow">CODEX-UI / LOCAL TEST SURFACE</p>
-    <h1>Make something<br />happen.</h1>
-    <p>
-      A real, local interface for your agent's first interaction. Nothing is
-      sent anywhere. Read the controls, activate the demo, and inspect the
-      result.
-    </p>
-    <label for="message">Message</label>
-    <input id="message" value="Hello from my agent" autocomplete="off" />
-    <button id="activate" type="button">Activate demo</button>
-    <output id="result" aria-live="polite" data-count="0"
-      >Ready. Waiting for your agent.</output
-    >
-  </main>
-  <script>
-    let count = 0;
-    document.querySelector("#activate").addEventListener("click", () => {
-      const result = document.querySelector("#result");
-      result.dataset.count = String(++count);
-      result.textContent = `Activated ${count} time${count === 1 ? "" : "s"}: ${document.querySelector("#message").value}`;
-    });
-  </script>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>codex-ui Playground</title>
+    <link rel="icon" href="../site/icon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f5f5f7;
+        color: #1d1d1f;
+        -webkit-font-smoothing: antialiased;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 52px 24px;
+      }
+      header,
+      main {
+        width: min(100%, 660px);
+        margin-inline: auto;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 44px;
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: -0.6px;
+      }
+      header img {
+        width: 29px;
+        height: 29px;
+      }
+      main {
+        background: #fff;
+        border: 1px solid #e2e2e8;
+        border-radius: 18px;
+        padding: 44px;
+        box-shadow: 0 16px 45px #20203106;
+      }
+      .overline {
+        color: #66666e;
+        font-size: 13px;
+        margin: 0 0 18px;
+      }
+      h1 {
+        font-size: clamp(35px, 6vw, 46px);
+        font-weight: 600;
+        line-height: 1.08;
+        letter-spacing: -1.8px;
+        margin: 0 0 23px;
+      }
+      p {
+        color: #64646b;
+        line-height: 1.65;
+        font-size: 16px;
+      }
+      label {
+        display: block;
+        margin: 30px 0 10px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      input,
+      button {
+        font: inherit;
+        border-radius: 9px;
+        padding: 13px 16px;
+      }
+      input {
+        display: block;
+        border: 1px solid #c9c9d1;
+        background: #fff;
+        color: #202023;
+        width: 100%;
+      }
+      button {
+        border: 0;
+        background: #1d1d1f;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 20px 0 25px;
+        min-height: 44px;
+      }
+      button:hover {
+        background: #39393d;
+      }
+      :focus-visible {
+        outline: 3px solid #087be6;
+        outline-offset: 4px;
+      }
+      output {
+        display: block;
+        border-top: 1px solid #e2e2e8;
+        padding-top: 23px;
+        color: #62626a;
+        font:
+          13px/1.65 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        overflow-wrap: anywhere;
+      }
+      output[data-count]:not([data-count="0"]) {
+        color: #21673e;
+      }
+      .footer {
+        width: min(100%, 660px);
+        margin: 25px auto;
+        font-size: 13px;
+      }
+      .footer a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      @media (max-width: 520px) {
+        body {
+          padding: 29px 20px;
+        }
+        header {
+          margin-bottom: 27px;
+        }
+        main {
+          padding: 29px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header><img src="../site/icon.svg" alt="" />codex-ui</header>
+    <main id="playground">
+      <p class="overline">Local playground</p>
+      <h1>Try a desktop action.</h1>
+      <p>
+        Enter a message, activate the button, and inspect the result. Your agent
+        can use these same controls. This page sends no data anywhere.
+      </p>
+      <label for="message">Message</label
+      ><input id="message" value="Hello from my agent" autocomplete="off" />
+      <button id="activate" type="button">Activate demo</button>
+      <output id="result" aria-live="polite" data-count="0"
+        >Ready. Waiting for an action.</output
+      >
+      <noscript
+        ><p>This example needs JavaScript to update its result.</p></noscript
+      >
+    </main>
+    <p class="footer"><a href="../site/guide.html">Read the guide →</a></p>
+    <script>
+      let count = 0;
+      document.querySelector("#activate").addEventListener("click", () => {
+        const result = document.querySelector("#result");
+        result.dataset.count = String(++count);
+        result.textContent = `Activated ${count} time${count === 1 ? "" : "s"}: ${document.querySelector("#message").value}`;
+      });
+    </script>
+  </body>
 </html>

@@ -1,26 +1,18 @@
-<p align="center"><img src="site/wordmark.svg" alt="codex-ui — your agent, your computer, full control" width="920"></p>
+<p align="center"><img src="site/wordmark.svg" alt="codex-ui — Desktop control for your agent" width="920"></p>
 
-<p align="center"><a href="https://ensomniac.github.io/codex-ui/">Explore the guide</a> · <a href="#install">Install</a> · <a href="AGENTS.md">Agent entry point</a> · <a href="CONTRIBUTING.md">Build with us</a></p>
+<p align="center"><a href="https://ensomniac.github.io/codex-ui/">Website</a> · <a href="https://ensomniac.github.io/codex-ui/guide.html">Guide</a> · <a href="AGENTS.md">AGENTS.md</a> · <a href="https://github.com/ensomniac/codex-ui/releases">Releases</a></p>
 
-# Your agent. Your computer. Full control.
+# codex-ui
 
-**Agents: this repository is for you. You own its future. Maintain it, improve it, and submit pull requests.** Humans are equally welcome. You do not need an invitation, a proposal meeting, or a special badge to contribute.
+Native desktop control for agents. Capture a window, read its controls, type, click, arrange windows, and inspect Chrome in the session you already use. Works with any agent that can run a local command and inspect an image.
 
-`codex-ui` gives your agent the same desktop you use: your running apps, your signed-in browser, your local files, your displays. It sees pixels, reads semantic controls, types, clicks, arranges windows, and inspects Chrome's live DOM. It works with any agent that can run a command and inspect an image. No account, hosted service, browser relaunch, API key, telemetry, or per-action confirmation dialog.
+**Agents: this repository is for you. You are encouraged to maintain it, improve it, add platforms, and submit pull requests. Start with [AGENTS.md](AGENTS.md).**
 
-> “A core tenet of this system: maximum efficiency at the highest risk.”
->
-> “The use of this tool is inherently meant to allow your agent to operate as you — with the same access that you have, as a human.”
->
-> — Ryan Martin / Ensomniac, founding brief, September 10, 2026
+Desktop control runs locally, without an account, hosted service or telemetry. It uses the access of your local account. An activity indicator shows what is happening; the controller yields to physical input and restores the pointer afterward.
 
-This is deliberate, powerful local software. It uses the permissions of the account running it. Once the human has authorized the work, get on with it. Precise targeting, a visible activity indicator, yielding to physical input, and restoring the pointer make that power more usable. They are engineering behaviors, not approval rituals. Read the [founding philosophy](docs/philosophy.md).
-
-**Released desktop backend:** macOS 13+, Apple Silicon and Intel. Windows and Linux have portable installation, upgrades, schemas, and skills today; native desktop control is [planned](docs/platforms.md), not advertised as working. `codex-ui capabilities` always tells the truth.
+**Native desktop support:** macOS 13+, Apple Silicon and Intel. Windows and Linux support installation, schemas, skills and upgrades; their native desktop backends are [planned](docs/platforms.md).
 
 ## Install
-
-Python 3.11+ and macOS are required for desktop control. The recommended installer supplies an isolated Python runtime through uv when needed:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ensomniac/codex-ui/main/install.sh | sh
@@ -28,61 +20,49 @@ codex-ui doctor
 codex-ui skill install
 ```
 
-Prefer a package manager? Every route has an upgrade path. Public artifacts are served from **GitHub Releases**, so no registry account is needed. The Python distribution is `ensomniac-codex-ui`; the command is `codex-ui`.
+The installer supplies uv and an isolated Python runtime. macOS may request Accessibility, Screen Recording or Automation access for your terminal or agent host. `doctor` reports readiness. The tool adds no per-action confirmation prompt.
+
+Or use Homebrew:
 
 ```sh
-# uv — isolated, fast, no checkout
-uv tool install 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac_codex_ui-2.0.1-py3-none-any.whl'
-
-# Homebrew
 brew tap ensomniac/codex-ui https://github.com/ensomniac/codex-ui
 brew install ensomniac/codex-ui/codex-ui
+```
 
-# npm (also available through pnpm, Yarn, Bun and npx)
-npm install -g 'https://github.com/ensomniac/codex-ui/releases/download/v2.0.1/ensomniac-codex-ui-2.0.1.tgz'
+Packages are distributed through GitHub Releases. [Installation instructions](docs/install.md) cover uv, pipx, pip, npm/npx, pnpm, Yarn and Bun. JavaScript managers require Node 18+ and uv or Python 3.11+.
 
-# Upgrade the installed runtime from any supported platform
+## Try one action
+
+Open [the website](https://ensomniac.github.io/codex-ui/) in Chrome. Its example contains a real button named “Mark reviewed.”
+
+```sh
+codex-ui press \
+  --chrome-url 'ensomniac.github.io/codex-ui/' \
+  --role button --name 'Mark reviewed' --capture-after
+```
+
+The page should change to “Reviewed.” Open the returned capture path to verify it. Every operation returns versioned JSON; `ok: true` establishes command completion, while the page state establishes the result.
+
+The [guide](https://ensomniac.github.io/codex-ui/guide.html) covers target selection, Chrome inspection, plans, updates and troubleshooting. The repository includes a [local playground](examples/playground.html), [JSON plan](examples/playground.json), [Python example](examples/inspect_page.py) and [complete command reference](docs/commands.md). Run `codex-ui schema` for command discovery and `codex-ui capabilities` for platform support.
+
+## Keep it current
+
+```sh
 codex-ui upgrade --check
 codex-ui upgrade
 codex-ui skill install
 ```
 
-[All installers, upgrade commands and uninstall instructions →](docs/install.md)
+The updater verifies the latest stable release and updates the installed runtime. Every supported platform must include a tested upgrade from the previous release. [Release process](docs/releasing.md).
 
-macOS may ask once for Accessibility, Screen Recording, or Automation access for your terminal/agent host. `doctor` reports what is actually available. The tool adds no permission layer of its own.
+## Built to be maintained
 
-## Put it to work
+Fork, make a useful change, validate it, and open a PR. CI runs and Ryan is notified. His locally operated agent reviews the exact change and signs its approval. [Contributing](CONTRIBUTING.md) · [Architecture](docs/architecture.md) · [Review process](docs/governance.md) · [Roadmap](ROADMAP.md).
 
-```sh
-codex-ui windows --app 'Google Chrome'
-codex-ui capture --chrome-url 'your-project/index.html' --label before
-codex-ui inspect --chrome-url 'your-project/index.html' --search Save --all
-codex-ui press --chrome-url 'your-project/index.html' \
-  --role button --name 'Save changes' --capture-after
-codex-ui chrome-dom --chrome-url 'your-project/index.html' \
-  --selector '#app' --depth 2
-codex-ui window-set --app Terminal --preset left-half --display 1
-```
+> “A core tenet of this system: maximum efficiency at the highest risk.”
+>
+> — Ryan Martin / Ensomniac, founding brief, September 10, 2026
 
-Every operation returns versioned JSON. Capture paths point to real images; inspect them to verify the result. `codex-ui schema` describes every command and argument for tools that want to discover the interface automatically.
+This began as `codex_sync_mouse_and_keyboard_controller.py` on Ryan's Mac. He asked his agent to make it public so other people and agents could take it over and run with it. His brief calls for the agent to operate as the human, with the same access, and for the tool to stay free of unnecessary permission layers. [The founding brief](docs/philosophy.md).
 
-| Capability | What it makes possible |
-| --- | --- |
-| Pixels + semantic controls | See the real interface; press a named control when coordinates would be fragile. |
-| Live Chrome inspection | Read DOM and visible console entries in the existing Chrome profile, including `file://`. |
-| Multiple displays + Retina mapping | Convert screenshot pixels to global desktop points, including negative coordinates. |
-| Mouse, keyboard, Unicode text | Operate native applications and interfaces without a custom integration. |
-| Window layout | Move and resize, then report the bounds the application actually accepted. |
-| JSON plans | Run related actions inside one visible control session. |
-
-Try the self-contained [playground](examples/playground.html) and [example plan](examples/playground.json). Read the [command guide](docs/commands.md) for actual syntax and limitations.
-
-## A repository built for its maintainers
-
-Start with [AGENTS.md](AGENTS.md). It maps the code, tests, release contract, and contribution path. The [architecture guide](docs/architecture.md) explains the native boundary. The [platform plan](docs/platforms.md) makes installation **and upgrades** a requirement for every future backend.
-
-The loop is **PR → CI → notify Ryan → his agent reviews → approve the exact commit → merge**. Only Ryan's locally operated agent issues trusted approval through the `ensomniac` code-owner identity and a dedicated local signing key. Other agents are encouraged to write, critique, and improve the code; they cannot grant themselves merge authority. [How the approval mechanism works →](docs/governance.md)
-
-This began as `codex_sync_mouse_and_keyboard_controller.py`, a working tool on Ryan's Mac. On September 10, 2026, Ryan asked his agent to promote it into public infrastructure so others could take it over and run with it. This project is that handoff: working software, accessible contracts, real examples, and a small team's standard of care.
-
-MIT licensed. Created by Ensomniac and maintained with agents. Independent project; not affiliated with or endorsed by OpenAI. [Release history](CHANGELOG.md).
+MIT licensed. Independent project by Ensomniac; not affiliated with or endorsed by OpenAI or Apple.

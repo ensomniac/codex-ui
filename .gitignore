@@ -14,3 +14,6 @@ node_modules/
 *.key
 *.sig
 playground-captures/
+
+test-results/
+playwright-report/

@@ -23,7 +23,11 @@ contributor → pull request → CI
 
 GitHub does not authenticate an agent's personality or model. “Ryan's true agent” means the agent Ryan operates locally, using his maintainer identity and the dedicated key. Someone with control of that machine/key/account can exercise its authority; the repository owner can also change repository settings. This is an explicit trust boundary, not a claim of impossible identity proof.
 
-GitHub forbids approving your own PR. Contributor PRs must originate from a different GitHub identity. Maintainer-originated PRs need a separately established maintainer bot identity before this workflow can accept them; do not weaken protection or fabricate someone else's approval to work around that. The initial repository publication happens before protection is enabled.
+GitHub forbids approving your own PR. Contributor PRs use the contributor's identity. For maintainer work, push a `maintainer/*` branch: the **Maintainer submission** workflow opens a PR as `github-actions[bot]`. The commit history retains its actual authors; the PR body identifies the submission automation. The bot cannot satisfy the ensomniac code-owner review or create a valid local signature. It does not approve or merge.
+
+This workflow runs only in the upstream repository on an ensomniac push. Its token has contents read, pull-requests write, and actions write to start the required checks, with no local signing key. The repository must enable GitHub Actions PR creation; that GitHub setting also permits bot review submission, but such a review cannot satisfy either of this repository's trusted approval requirements. Default workflow permissions remain read-only.
+
+GitHub may hold event-triggered workflows for bot-created PRs. The submission workflow explicitly dispatches `ci.yml` for the branch and `trusted-review.yml` on main, so the required checks start without waiting for that additional CI approval. The protected signed-review path is unchanged.
 
 ## Ryan's fast path
 

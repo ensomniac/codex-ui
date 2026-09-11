@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
     paths: ["site/**", ".github/workflows/pages.yml"]
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
   workflow_dispatch:
 permissions:
   contents: read
@@ -13,16 +16,38 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    if: github.repository == 'ensomniac/codex-ui'
+    if: github.repository == 'ensomniac/codex-ui' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Wait for matching public release assets
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PYCODE'
+          import json, os, re, subprocess
+          from pathlib import Path
+          version = re.search(r'"(\d+\.\d+\.\d+)"', Path('src/codex_ui/_version.py').read_text())[1]
+          release = json.loads(subprocess.check_output(['gh','api','repos/ensomniac/codex-ui/releases/latest'], text=True))
+          names = {a['name'] for a in release['assets']}
+          ready = release['tag_name'] == 'v' + version and {f'ensomniac_codex_ui-{version}-py3-none-any.whl', f'ensomniac-codex-ui-{version}.tgz'} <= names
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write('ready=' + str(ready).lower() + '\n')
+          print('Publishing matching release' if ready else 'Keeping the current site until matching release assets are public')
+          PYCODE
+      - if: steps.release.outputs.ready == 'true'
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - if: steps.release.outputs.ready == 'true'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site
-      - id: deployment
+      - if: steps.release.outputs.ready == 'true'
+        id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
