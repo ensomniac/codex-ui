@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ensomniac-codex-ui"
+dynamic = ["version"]
+description = "Your agent. Your computer. Full control. Native desktop eyes and hands."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Ryan Martin (Ensomniac) and contributors"}]
+keywords = ["agents", "desktop", "automation", "accessibility", "codex", "macos"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Operating System :: MacOS :: MacOS X",
+  "Programming Language :: Python :: 3",
+  "Topic :: Desktop Environment",
+]
+dependencies = [
+  "pyobjc-framework-Cocoa>=11,<13; sys_platform == 'darwin'",
+  "pyobjc-framework-Quartz>=11,<13; sys_platform == 'darwin'",
+  "pyobjc-framework-ApplicationServices>=11,<13; sys_platform == 'darwin'",
+]
+
+[project.urls]
+Homepage = "https://ensomniac.github.io/codex-ui/"
+Repository = "https://github.com/ensomniac/codex-ui"
+Issues = "https://github.com/ensomniac/codex-ui/issues"
+Documentation = "https://github.com/ensomniac/codex-ui/tree/main/docs"
+
+[project.scripts]
+codex-ui = "codex_ui.cli:main"
+
+[dependency-groups]
+dev = ["ruff>=0.12", "build>=1.2", "twine>=6", "PyYAML>=6"]
+
+[tool.hatch.version]
+path = "src/codex_ui/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/codex_ui"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/codex_ui/backends/macos/engine.py" = ["F401"]
+"tests/test_macos.py" = ["E402"]

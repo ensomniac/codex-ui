@@ -1,0 +1,24 @@
+{
+  "name": "ensomniac-codex-ui",
+  "version": "2.0.0",
+  "description": "Native desktop eyes and hands for agents. GitHub-release bridge to the Python runtime.",
+  "license": "MIT",
+  "repository": "github:ensomniac/codex-ui",
+  "homepage": "https://ensomniac.github.io/codex-ui/",
+  "bin": {
+    "codex-ui": "npm/codex-ui.cjs"
+  },
+  "files": [
+    "npm/",
+    "dist/*.whl",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "prepack": "node npm/prepare.cjs",
+    "test": "node --test npm/*.test.cjs"
+  }
+}

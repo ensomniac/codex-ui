@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>codex-ui Playground</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+      background: #11130f;
+      color: #f1f1e9;
+    }
+    body {
+      max-width: 760px;
+      margin: 10vh auto;
+      padding: 32px;
+    }
+    .eyebrow {
+      font: 12px monospace;
+      letter-spacing: 0.18em;
+      color: #ccff69;
+    }
+    h1 {
+      font-size: clamp(40px, 8vw, 72px);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+    p {
+      line-height: 1.6;
+      color: #b9bdb1;
+    }
+    label {
+      display: block;
+      margin: 30px 0 10px;
+    }
+    input,
+    button {
+      font: inherit;
+      padding: 16px;
+      border: 1px solid #555c49;
+      border-radius: 8px;
+    }
+    input {
+      background: #25291f;
+      color: white;
+      width: min(90%, 400px);
+    }
+    button {
+      display: block;
+      margin: 24px 0;
+      background: #ccff69;
+      color: #19220a;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 4px;
+    }
+    output {
+      display: block;
+      border-top: 1px solid #434938;
+      padding-top: 24px;
+      font: 14px monospace;
+      color: #ccff69;
+    }
+  </style>
+  <main id="playground">
+    <p class="eyebrow">CODEX-UI / LOCAL TEST SURFACE</p>
+    <h1>Make something<br />happen.</h1>
+    <p>
+      A real, local interface for your agent's first interaction. Nothing is
+      sent anywhere. Read the controls, activate the demo, and inspect the
+      result.
+    </p>
+    <label for="message">Message</label>
+    <input id="message" value="Hello from my agent" autocomplete="off" />
+    <button id="activate" type="button">Activate demo</button>
+    <output id="result" aria-live="polite" data-count="0"
+      >Ready. Waiting for your agent.</output
+    >
+  </main>
+  <script>
+    let count = 0;
+    document.querySelector("#activate").addEventListener("click", () => {
+      const result = document.querySelector("#result");
+      result.dataset.count = String(++count);
+      result.textContent = `Activated ${count} time${count === 1 ? "" : "s"}: ${document.querySelector("#message").value}`;
+    });
+  </script>
+</html>

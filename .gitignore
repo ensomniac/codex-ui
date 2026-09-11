@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+node_modules/
+*.tgz
+.DS_Store
+.env
+*.pem
+*.key
+*.sig
+playground-captures/

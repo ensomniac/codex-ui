@@ -1,0 +1,4 @@
+# package.json contains the allowlist. Do not inherit .gitignore's dist rule.
+dist/*.tar.gz
+dist/*.tgz
+dist/SHA256SUMS

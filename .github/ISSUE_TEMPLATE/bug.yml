@@ -1,0 +1,15 @@
+name: Bug report
+description: A reproducible problem with codex-ui
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the command, expected result and actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and evidence
+      description: Version, OS, Python, and relevant doctor output. Remove private information.

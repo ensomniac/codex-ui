@@ -1,0 +1,35 @@
+name: Trusted agent review
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number
+        required: true
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 */6 * * *"
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+concurrency:
+  group: trusted-review
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.repository == 'ensomniac/codex-ui'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/trusted_gate.py
+        env:
+          GH_TOKEN: ${{ github.token }}
