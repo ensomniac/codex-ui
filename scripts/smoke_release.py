@@ -82,7 +82,11 @@ def main() -> None:
         result = json.loads(run([command, "upgrade"], env))
         assert result["updated"] and result["installed_version"] == version, result
         assert run([command, "--version"], env).strip() == f"codex-ui {version}"
-        assert not json.loads(run([command, "upgrade", "--check"], env))["update_available"]
+        # A candidate preflight installs the *previous* release. Do not test that
+        # older release's API client again (2.0.0 cannot use CI's GitHub token).
+        # The post-publication run always verifies the newly shipped --check.
+        if not args.candidate:
+            assert not json.loads(run([command, "upgrade", "--check"], env))["update_available"]
         capabilities = json.loads(run([command, "capabilities"], env))
         assert capabilities["lifecycle"]["upgrade"]
         print(json.dumps({"ok": True, "platform": sys.platform, "fixture_version": "0.0.0",
