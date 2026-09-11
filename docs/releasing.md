@@ -11,3 +11,5 @@ Only the trusted maintainer operates releases. Do not publish from an unreviewed
 `upgrade` uses the latest non-prerelease GitHub release and validates artifact origin/digest. Keep every previous release available so explicit recovery remains possible. Do not delete/reuse release tags, move release assets between versions, or silently change a published wheel. Correct a release with a new patch version.
 
 The release workflow publishes GitHub artifacts today. PyPI/npm registry trusted publishing can be added after the maintainer connects those identities. Keep docs explicit about which channels are actually live.
+
+The **Released install and upgrade** workflow runs after publication on Apple Silicon, Intel, Windows and Linux. It downloads and verifies the public wheel, installs a synthetic `0.0.0` fixture in a temporary uv tool directory, runs the real `upgrade` command against GitHub, and verifies the installed release. The synthetic fixture is explicit because the first public release has no earlier published wheel. Subsequent releases should also retain evidence for upgrades from the actual previous release.
