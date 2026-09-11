@@ -25,9 +25,9 @@ GitHub does not authenticate an agent's personality or model. “Ryan's true age
 
 GitHub forbids approving your own PR. Contributor PRs use the contributor's identity. For maintainer work, push a `maintainer/*` branch: the **Maintainer submission** workflow opens a PR as `github-actions[bot]`. The commit history retains its actual authors; the PR body identifies the submission automation. The bot cannot satisfy the ensomniac code-owner review or create a valid local signature. It does not approve or merge.
 
-This workflow runs only in the upstream repository on an ensomniac push. Its token has contents read, pull-requests write, and actions write to start the required checks, with no local signing key. The repository must enable GitHub Actions PR creation; that GitHub setting also permits bot review submission, but such a review cannot satisfy either of this repository's trusted approval requirements. Default workflow permissions remain read-only.
+This workflow runs only in the upstream repository on an ensomniac push. Its token has contents read, pull-requests write, and actions write to start the trusted status check, with no local signing key. The repository must enable GitHub Actions PR creation; that GitHub setting also permits bot review submission, but such a review cannot satisfy either of this repository's trusted approval requirements. Default workflow permissions remain read-only.
 
-GitHub may hold event-triggered workflows for bot-created PRs. On PR creation, the submission workflow explicitly dispatches `ci.yml` for the branch and `trusted-review.yml` on main, so the required checks start without waiting for that additional CI approval. Subsequent owner pushes use the normal PR events and do not start a duplicate CI matrix. The protected signed-review path is unchanged.
+GitHub can hold CI for bot-created or first-time contributor PRs. After the agent reviews the exact head, the maintainer helper starts that PR's held CI run through GitHub's API and waits for its result. A separately dispatched branch build is insufficient when GitHub requires the PR's own merge build, so the submission workflow does not start a duplicate matrix. Subsequent owner pushes use normal PR events. This is handled within the existing review command; Ryan does not need another prompt or browser step.
 
 ## Ryan's fast path
 
@@ -41,6 +41,8 @@ python scripts/maintainer.py 123 \
   --body-file /tmp/codex-ui-review.md \
   --merge
 ```
+
+The helper checks the maintainer identity and review evidence before starting any held CI. It waits for the PR-associated run, stops on failure or a changed head/base, then rechecks the reviewed commits before signing. A pending run is left running if the helper's 30-minute wait expires; repeat the command to resume. It does not retry failed builds automatically.
 
 The `--merge` flag enables auto-merge once trusted verification completes; it does not bypass checks. Without it, the helper only approves. No agent process or paid model is started by GitHub Actions.
 
