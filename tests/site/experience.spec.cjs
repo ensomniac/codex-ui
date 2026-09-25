@@ -2,9 +2,9 @@ const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
 
 for (const width of [320, 390, 768, 1440]) {
-  test(`home and guide remain readable at ${width}px`, async ({ page }) => {
+  test(`home, tasks and guide remain readable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    for (const route of ["/", "/guide.html"]) {
+    for (const route of ["/", "/recipes.html", "/guide.html"]) {
       await page.goto(route);
       expect(
         await page.evaluate(
@@ -127,11 +127,49 @@ test("reduced motion retains content and disables animated scrolling", async ({
   ).toBe("auto");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
+test("a visitor can choose a task and copy its complete instructions", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+  await page.getByRole("link", { name: "Try it with your agent" }).click();
+  await expect(page).toHaveURL(/recipes\.html#first-run$/);
+  for (const id of ["first-run", "signed-in", "ui-fix", "workspace"]) {
+    const card = page.locator(`#${id}`);
+    const task = await card.locator("p[id]").innerText();
+    await card.getByRole("button", { name: "Copy task", exact: true }).click();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(task);
+    await expect(page.locator("#copy-message")).toHaveText("Task copied.");
+  }
+});
+test("tasks remain selectable when the clipboard is unavailable", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: async () => { throw new Error("denied"); } },
+    });
+  });
+  await page.goto("/recipes.html");
+  await page.locator("#first-run").getByRole("button", { name: "Copy task" }).click();
+  expect(await page.evaluate(() => getSelection().toString())).toBe(
+    await page.locator("#prompt-first").innerText(),
+  );
+  await expect(page.locator("#copy-message")).toHaveText("Task selected. Use your copy shortcut.");
+});
+test("tasks and setup instructions work without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("http://127.0.0.1:4198/recipes.html");
+  for (const id of ["prompt-first", "prompt-signed", "prompt-fix", "prompt-workspace"])
+    await expect(page.locator(`#${id}`)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Copy task" })).toHaveCount(0);
+  const response = await context.request.get("http://127.0.0.1:4198/start.md");
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain("codex-ui press --chrome-url 'codex-ui/?demo=first-run'");
+  await context.close();
+});
 test("internal guide anchors and local assets resolve", async ({
   page,
   request,
 }) => {
-  for (const route of ["/", "/guide.html"]) {
+  for (const route of ["/", "/recipes.html", "/guide.html"]) {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(route);

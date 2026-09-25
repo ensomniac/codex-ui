@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Desktop tasks for your AI agent — codex-ui</title>
+    <meta name="description" content="Copy a real task for your agent: try native macOS control, inspect your signed-in Chrome UI, verify a local fix, or arrange your workspace. Free and open source." />
+    <meta property="og:title" content="Give your agent a real desktop task — codex-ui" />
+    <meta property="og:description" content="Four copyable tasks for the Mac and browser session you already use. Start with a native click and an actual screenshot." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ensomniac.github.io/codex-ui/recipes.html" />
+    <meta property="og:image" content="https://ensomniac.github.io/codex-ui/social.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://ensomniac.github.io/codex-ui/recipes.html" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css?v=2.1.0&amp;rev=tasks-1" />
+    <script src="site.js?v=2.1.0&amp;rev=tasks-1" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="./" aria-label="codex-ui home"><img src="icon.svg" width="28" height="28" alt="" /><span>codex-ui</span></a>
+        <nav aria-label="Main navigation"><a href="recipes.html" aria-current="page">Tasks</a><a href="guide.html">Guide</a><a class="nav-install" href="./#install">Install</a></nav>
+      </div>
+    </header>
+    <main id="main">
+      <section class="shell task-hero">
+        <p class="overline">From a prompt to a visible result</p>
+        <h1>Give your agent<br />a desktop task.</h1>
+        <p class="hero-description">The browser you’re signed in to. The UI you’re building. The windows already open on your Mac.</p>
+        <p class="task-intro">Copy a task into an agent that can run local commands and view images. Native desktop control works on macOS 13+, on Apple Silicon and Intel.</p>
+        <nav class="task-jump-links" aria-label="Choose a desktop task">
+          <a href="#first-run">Try one click</a><a href="#signed-in">Inspect a signed-in page</a><a href="#ui-fix">Check a UI fix</a><a href="#workspace">Arrange windows</a>
+        </nav>
+      </section>
+      <div class="shell task-list">
+        <article class="task-card" id="first-run" aria-labelledby="first-title">
+          <div class="task-description">
+            <p class="overline">Start here</p>
+            <h2 id="first-title">One click.<br />Proof it worked.</h2>
+            <p>Your agent installs the tool if needed, clicks a real button through macOS, and shows you the screenshot.</p>
+            <p class="task-result"><strong>Done when:</strong> you can see “Reviewed” in the captured page and the agent has checked its state.</p>
+            <a class="text-link" href="./?demo=first-run">Open the example <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="task-prompt">
+            <div class="prompt-heading"><span>Paste into your agent</span><button class="copy-button" type="button" data-copy="prompt-first" data-copy-kind="Task" hidden>Copy task</button></div>
+            <p id="prompt-first">Set up codex-ui on my Mac and try its first desktop task. Read https://ensomniac.github.io/codex-ui/start.md and follow the setup and native-click walkthrough. Use the real desktop command to click “Mark reviewed,” inspect the resulting screenshot and page state, and show me what happened.</p>
+            <p class="prompt-note">Already installed? The walkthrough checks before installing. <a href="start.md">Read the instructions your agent gets.</a></p>
+          </div>
+        </article>
+        <article class="task-card" id="signed-in" aria-labelledby="signed-title">
+          <div class="task-description">
+            <p class="overline">Use your current session</p>
+            <h2 id="signed-title">See the page<br />you actually use.</h2>
+            <p>Give your agent the page URL. It can inspect your existing Chrome session, including UI that requires sign-in.</p>
+            <p class="task-result"><strong>Done when:</strong> the findings point to the visible page, with screenshots and DOM evidence where available.</p>
+          </div>
+          <div class="task-prompt">
+            <div class="prompt-heading"><span>Replace [page URL]</span><button class="copy-button" type="button" data-copy="prompt-signed" data-copy-kind="Task" hidden>Copy task</button></div>
+            <p id="prompt-signed">Use codex-ui to inspect [page URL] in my existing signed-in Chrome session. Read https://ensomniac.github.io/codex-ui/start.md if setup is needed. Find the exact tab, capture and inspect it, and read the relevant DOM. Identify up to three important usability problems with evidence from the current page. Keep this task to inspection.</p>
+            <p class="prompt-note">The tool uses your local browser access. Choose a page you want this agent to inspect.</p>
+          </div>
+        </article>
+        <article class="task-card" id="ui-fix" aria-labelledby="fix-title">
+          <div class="task-description">
+            <p class="overline">Close the loop on a code change</p>
+            <h2 id="fix-title">Check the fix<br />in the browser.</h2>
+            <p>A build can pass while a button is clipped or the wrong route is open. Ask for the rendered result.</p>
+            <p class="task-result"><strong>Done when:</strong> the intended route works, its controls are usable, and you have before-and-after captures.</p>
+          </div>
+          <div class="task-prompt">
+            <div class="prompt-heading"><span>Replace [local URL] and [issue]</span><button class="copy-button" type="button" data-copy="prompt-fix" data-copy-kind="Task" hidden>Copy task</button></div>
+            <p id="prompt-fix">Use codex-ui to verify [issue] at [local URL] in Chrome. Read https://ensomniac.github.io/codex-ui/start.md if setup is needed. Inspect the page and capture the problem, fix the relevant code in this workspace, reload the intended route, then inspect the actual screenshot and DOM. Check a wide and a narrow viewport. Show before-and-after evidence and report anything you could not verify.</p>
+            <p class="prompt-note">Works with local web servers and <code>file://</code> pages. Keep the page visible for captures.</p>
+          </div>
+        </article>
+        <article class="task-card" id="workspace" aria-labelledby="workspace-title">
+          <div class="task-description">
+            <p class="overline">Beyond the browser</p>
+            <h2 id="workspace-title">Make room<br />to work.</h2>
+            <p>Arrange native windows on one display. The command reports their actual bounds, including app size constraints.</p>
+            <p class="task-result"><strong>Done when:</strong> your chosen browser and terminal are side by side, confirmed by a display capture.</p>
+          </div>
+          <div class="task-prompt">
+            <div class="prompt-heading"><span>Choose your two windows</span><button class="copy-button" type="button" data-copy="prompt-workspace" data-copy-kind="Task" hidden>Copy task</button></div>
+            <p id="prompt-workspace">Use codex-ui to put my Chrome window on the left half and my Terminal window on the right half of the main display. Read https://ensomniac.github.io/codex-ui/start.md if setup is needed. Discover the display and window IDs first; if there are multiple candidates, ask which windows I mean. Save their starting bounds, arrange them, inspect a display capture, and report the actual final bounds so we can restore the original layout later.</p>
+            <p class="prompt-note">Some apps enforce minimum window sizes. The agent should report a constraint if the layout cannot fit.</p>
+          </div>
+        </article>
+      </div>
+      <section class="shell task-next" aria-labelledby="next-title">
+        <h2 id="next-title">Have a task that gets stuck?</h2>
+        <p>A particular app, a mixed-DPI display, an awkward control: a concrete example helps improve the tool. Share the command, expected result, and what happened. Remove private information from captures and output.</p>
+        <div class="inline-links"><a class="button primary" href="https://github.com/ensomniac/codex-ui/issues/new?template=desktop-task.yml">Report a desktop task</a><a class="text-link" href="guide.html">Read the full guide <span aria-hidden="true">→</span></a></div>
+      </section>
+    </main>
+    <p class="task-copy-status" id="copy-message" role="status" aria-live="polite"></p>
+    <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="./">codex-ui</a><p>MIT licensed. By Ensomniac. Independent of OpenAI and Apple.</p><a href="https://github.com/ensomniac/codex-ui">GitHub ↗</a></div></footer>
+  </body>
+</html>

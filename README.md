@@ -1,6 +1,6 @@
 <p align="center"><img src="site/wordmark.svg" alt="codex-ui — Desktop control for your agent" width="920"></p>
 
-<p align="center"><a href="https://ensomniac.github.io/codex-ui/">Website</a> · <a href="https://ensomniac.github.io/codex-ui/guide.html">Guide</a> · <a href="AGENTS.md">AGENTS.md</a> · <a href="https://github.com/ensomniac/codex-ui/releases">Releases</a></p>
+<p align="center"><a href="https://ensomniac.github.io/codex-ui/">Website</a> · <a href="https://ensomniac.github.io/codex-ui/recipes.html">Try a task</a> · <a href="https://ensomniac.github.io/codex-ui/guide.html">Guide</a> · <a href="AGENTS.md">AGENTS.md</a> · <a href="https://github.com/ensomniac/codex-ui/releases">Releases</a></p>
 
 # codex-ui
 
@@ -11,6 +11,26 @@ Native desktop control for agents. Capture a window, read its controls, type, cl
 Desktop control runs locally, without an account, hosted service or telemetry. It uses the access of your local account. An activity indicator shows what is happening; the controller yields to physical input and restores the pointer afterward.
 
 **Native desktop support:** macOS 13+, Apple Silicon and Intel. Windows and Linux support installation, schemas, skills and upgrades; their native desktop backends are [planned](docs/platforms.md).
+
+## Give your agent a task
+
+Paste this into an agent that can run local commands and view images:
+
+```text
+Set up codex-ui on my Mac and try its first desktop task. Read
+https://ensomniac.github.io/codex-ui/start.md and follow the setup and
+native-click walkthrough. Use the real desktop command to click
+“Mark reviewed,” inspect the resulting screenshot and page state,
+and show me what happened.
+```
+
+The walkthrough checks for an existing installation, helps with macOS permissions, and verifies a real native click in a local-state browser example. It requires Google Chrome. [Read the walkthrough](site/start.md) or [install manually](#install).
+
+Then try a useful task:
+
+- [Inspect a signed-in page](https://ensomniac.github.io/codex-ui/recipes.html#signed-in) in the Chrome session you already use.
+- [Verify a UI fix](https://ensomniac.github.io/codex-ui/recipes.html#ui-fix) with before-and-after captures and live DOM evidence.
+- [Arrange your workspace](https://ensomniac.github.io/codex-ui/recipes.html#workspace) using native window IDs and actual display bounds.
 
 ## Install
 

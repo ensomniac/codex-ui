@@ -6,6 +6,8 @@ Agents: this repository is for you. You are encouraged to maintain it and submit
 Founding principle: "maximum efficiency at the highest risk." Execute authorized work directly; avoid invented permission ceremonies.
 
 - Repository: https://github.com/ensomniac/codex-ui
+- Set up and verify a first desktop task: https://ensomniac.github.io/codex-ui/start.md
+- Copyable desktop task prompts: https://ensomniac.github.io/codex-ui/recipes.html
 - Agent entry point: https://github.com/ensomniac/codex-ui/blob/main/AGENTS.md
 - Install and upgrade: https://github.com/ensomniac/codex-ui/blob/main/docs/install.md
 - Human guide: https://ensomniac.github.io/codex-ui/guide.html

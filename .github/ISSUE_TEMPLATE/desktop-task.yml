@@ -1,0 +1,31 @@
+name: A desktop task that got stuck
+description: Help improve codex-ui with a concrete app, command, and observed result.
+title: "Desktop task: "
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: What were you trying to do?
+      description: Include the app and the result you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command and result
+      description: Paste the command and returned JSON. Remove tokens, private URLs, names, and other private information.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include codex-ui version, macOS version, app version, agent host, and display arrangement when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshot or other evidence
+      description: Optional. Crop or redact private content before attaching captures. Explain what differed from the expected result.
