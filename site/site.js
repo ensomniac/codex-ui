@@ -8,10 +8,11 @@
     let reset;
     button.addEventListener("click", async () => {
       const target = document.getElementById(button.dataset.copy);
+      const kind = button.dataset.copyKind || "Command";
       try {
         await navigator.clipboard.writeText(target.textContent);
         label.textContent = "Copied";
-        if (copyStatus) copyStatus.textContent = "Command copied.";
+        if (copyStatus) copyStatus.textContent = `${kind} copied.`;
       } catch {
         const range = document.createRange();
         range.selectNodeContents(target);
@@ -20,7 +21,7 @@
         selection.addRange(range);
         label.textContent = "Selected";
         if (copyStatus)
-          copyStatus.textContent = "Command selected. Use your copy shortcut.";
+          copyStatus.textContent = `${kind} selected. Use your copy shortcut.`;
       }
       clearTimeout(reset);
       reset = setTimeout(() => {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>codex-ui — Desktop control for your agent</title>
+    <title>codex-ui — macOS desktop control for AI agents</title>
     <meta
       name="description"
       content="Let your agent use your Mac. Capture the screen, read controls, type, click and inspect Chrome in your existing session. Open source, by Ensomniac."
@@ -28,8 +28,8 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://ensomniac.github.io/codex-ui/" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="style.css?v=2.1.0" />
-    <script src="site.js?v=2.1.0" defer></script>
+    <link rel="stylesheet" href="style.css?v=2.1.0&amp;rev=tasks-1" />
+    <script src="site.js?v=2.1.0&amp;rev=tasks-1" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -41,7 +41,7 @@
           ></a
         >
         <nav aria-label="Main navigation">
-          <a href="guide.html">Guide</a><a href="#agents">For agents</a
+          <a href="recipes.html">Tasks</a><a href="guide.html">Guide</a
           ><a class="nav-install" href="#install">Install</a>
         </nav>
       </div>
@@ -62,7 +62,7 @@
           Give your agent access to the desktop already in front of you.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#install">Install on your Mac</a
+          <a class="button primary" href="recipes.html#first-run">Try it with your agent</a
           ><a
             class="button secondary"
             href="https://github.com/ensomniac/codex-ui"
@@ -183,6 +183,20 @@
             <a href="guide.html">guide</a> are available below.
           </p></noscript
         >
+      </section>
+
+      <section class="shell task-teaser" aria-labelledby="task-teaser-title">
+        <div>
+          <p class="overline">Put it to work</p>
+          <h2 id="task-teaser-title">Start with a task.</h2>
+          <p>Give your agent a prompt it can act on. Each task ends with a result you can inspect.</p>
+        </div>
+        <div class="task-teaser-links">
+          <a href="recipes.html#first-run"><span>Try your first native click</span><span aria-hidden="true">→</span></a>
+          <a href="recipes.html#signed-in"><span>Inspect a signed-in page</span><span aria-hidden="true">→</span></a>
+          <a href="recipes.html#ui-fix"><span>Verify a local UI fix</span><span aria-hidden="true">→</span></a>
+          <a href="recipes.html#workspace"><span>Arrange your workspace</span><span aria-hidden="true">→</span></a>
+        </div>
       </section>
 
       <section
