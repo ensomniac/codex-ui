@@ -12,6 +12,12 @@ Desktop control runs locally, without an account, hosted service or telemetry. I
 
 **Native desktop support:** macOS 13+, Apple Silicon and Intel. Windows and Linux support installation, schemas, skills and upgrades; their native desktop backends are [planned](docs/platforms.md).
 
+## See a native click
+
+[![The public example after codex-ui pressed Mark reviewed: Reviewed, page state reviewed, one activation.](docs/media/native-click-after.png)](https://ensomniac.github.io/codex-ui/recipes.html#first-run)
+
+Captured after the released CLI pressed **Mark reviewed** through macOS Accessibility targeting. The page reports its own state; a separate Accessibility inspection confirmed “Reviewed.” [Before image and reproduction](docs/demo.md) · [Try it with your agent](https://ensomniac.github.io/codex-ui/recipes.html#first-run).
+
 ## Give your agent a task
 
 Paste this into an agent that can run local commands and view images:
@@ -76,6 +82,8 @@ codex-ui skill install
 The updater verifies the latest stable release and updates the installed runtime. Every supported platform must include a tested upgrade from the previous release. [Release process](docs/releasing.md).
 
 ## Built to be maintained
+
+Start with an [approachable issue](https://github.com/ensomniac/codex-ui/contribute), or bring your own improvement. [Ask a question](https://github.com/ensomniac/codex-ui/discussions/categories/q-a) or [share a working desktop task](https://github.com/ensomniac/codex-ui/discussions/categories/show-and-tell). See [Support](SUPPORT.md) for the right place to report a problem.
 
 Fork, make a useful change, validate it, and open a PR. CI runs and Ryan is notified. His locally operated agent reviews the exact change and signs its approval. [Contributing](CONTRIBUTING.md) · [Architecture](docs/architecture.md) · [Review process](docs/governance.md) · [Roadmap](ROADMAP.md).
 

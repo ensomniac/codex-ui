@@ -1,1 +1,8 @@
 blank_issues_enabled: true
+contact_links:
+  - name: Setup or usage question
+    url: https://github.com/ensomniac/codex-ui/discussions/categories/q-a
+    about: Get help choosing a command or understanding a result.
+  - name: Share a working desktop task
+    url: https://github.com/ensomniac/codex-ui/discussions/categories/show-and-tell
+    about: Share the steps you ran and the result you observed.

@@ -1,0 +1,19 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask about setup or a desktop task. Start with [the first-run guide](https://ensomniac.github.io/codex-ui/start.md) if you have not installed the tool. Remove private data from output and captures.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+      description: Include the app and the outcome you want.
+    validations:
+      required: true
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What have you tried?
+      description: Command, result, codex-ui version, macOS version, and relevant doctor output if available.
+    validations:
+      required: true
