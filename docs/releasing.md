@@ -12,6 +12,8 @@ Only the trusted maintainer operates releases. Do not publish from an unreviewed
 
 The release workflow publishes GitHub artifacts today. PyPI/npm registry trusted publishing can be added after the maintainer connects those identities. Keep docs explicit about which channels are actually live.
 
+Release notes start with `docs/release-intro.md`, then include only the matching version's `CHANGELOG.md` section and a link to full history. Preview them with `uv run python scripts/release_notes.py`; a missing, empty, or duplicate version section fails before publication. Review the platform statement and install instructions when cutting a release. Editing existing release prose must not replace its tag or package assets.
+
 The **Released install and upgrade** workflow runs after publication on Apple Silicon, Intel, Windows and Linux. It downloads and verifies the current and actual previous stable wheels, installs each in separate temporary uv tool directories, and runs the previous release's real `upgrade` command. It checks the final version, capabilities and no-update result. A separate pre-publication candidate check uses an explicitly synthetic version to exercise the candidate updater against the current public release. These are different checks; the synthetic fixture does not establish an N−1 → N upgrade.
 
 `npm run test:site` checks the home page and guide at four widths, plus real demo state, clipboard paths, keyboard tabs, no-JavaScript access, reduced motion, local links and automated accessibility rules. Use `node scripts/capture_site.cjs` for local review captures and inspect them. Native Chrome interaction remains a separate acceptance check.
