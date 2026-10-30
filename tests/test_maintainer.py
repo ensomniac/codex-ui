@@ -45,6 +45,29 @@ class MaintainerTests(unittest.TestCase):
                 maintainer.ensure_ci(self.pr)
         self.assertFalse(any(call.kwargs.get("method") for call in api.call_args_list))
 
+    def test_unlinked_fork_run_requires_exact_source_and_pr_event(self):
+        self.pr["head"].update(repo={"id": 123}, ref="fix/example")
+        run = {**self.run, "pull_requests": [], "head_repository": {"id": 123},
+               "head_branch": "fix/example"}
+        self.assertTrue(maintainer.is_pr_run(run, self.pr))
+        for changed in ({"event": "workflow_dispatch"}, {"head_sha": "c" * 40},
+                        {"head_repository": {"id": 456}}, {"head_branch": "other"},
+                        {"pull_requests": [{"number": 3}]}):
+            with self.subTest(changed=changed):
+                self.assertFalse(maintainer.is_pr_run({**run, **changed}, self.pr))
+        self.assertFalse(maintainer.is_pr_run(run, {**self.pr, "head": {"sha": "a" * 40}}))
+
+    def test_unlinked_held_fork_build_is_approved_and_awaited(self):
+        self.pr["head"].update(repo={"id": 123}, ref="fix/example")
+        run = {**self.run, "pull_requests": [], "head_repository": {"id": 123},
+               "head_branch": "fix/example"}
+        held = {**run, "conclusion": "action_required"}
+        with patch.object(maintainer, "gh_api", side_effect=[
+            {"workflow_runs": [held]}, None, run,
+        ]) as api:
+            maintainer.ensure_ci(self.pr)
+        self.assertEqual(api.call_args_list[1].kwargs, {"method": "POST"})
+
     def test_changed_head_or_base_stops_waiting_without_signing(self):
         queued = {**self.run, "status": "in_progress", "conclusion": None}
         for field in ("head", "base"):
