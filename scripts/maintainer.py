@@ -65,6 +65,20 @@ def ensure_ci(pr: dict) -> None:
         time.sleep(5)
 
 
+def merge_reviewed_pr(pr: dict) -> None:
+    args = ["gh", "pr", "merge", str(pr["number"]), "--repo", REPO,
+            "--squash", "--match-head-commit", pr["head"]["sha"]]
+    result = subprocess.run(args + ["--auto"], capture_output=True, text=True)
+    if not result.returncode:
+        return
+    if "Pull request is in clean status" in result.stderr:
+        # Trusted verification can finish before gh enables auto-merge.
+        reviewed_pr(pr["number"], pr["head"]["sha"], pr["base"]["sha"])
+        subprocess.run(args, check=True)
+        return
+    raise SystemExit(result.stderr.strip() or "Could not enable PR auto-merge")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("number", type=int)
@@ -94,8 +108,7 @@ def main() -> None:
                     "--ref", "main", "-f", f"pr={args.number}"], check=True)
     print(f"Approved {REPO}#{args.number} at {args.head}; trusted verification queued.")
     if args.merge:
-        subprocess.run(["gh", "pr", "merge", str(args.number), "--repo", REPO,
-                        "--squash", "--auto", "--match-head-commit", args.head], check=True)
+        merge_reviewed_pr(pr)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
+from subprocess import CompletedProcess
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import maintainer
@@ -88,6 +89,31 @@ class MaintainerTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "ensomniac GitHub identity"):
                 maintainer.main()
         api.assert_called_once_with("user")
+
+    def test_clean_status_race_rechecks_reviewed_commits_before_normal_merge(self):
+        result = CompletedProcess([], 1, "", "GraphQL: Pull request is in clean status")
+        with patch.object(maintainer.subprocess, "run", side_effect=[result, None]) as run, \
+                patch.object(maintainer, "reviewed_pr") as recheck:
+            maintainer.merge_reviewed_pr(self.pr)
+        recheck.assert_called_once_with(2, "a" * 40, "b" * 40)
+        self.assertIn("--auto", run.call_args_list[0].args[0])
+        self.assertNotIn("--auto", run.call_args_list[1].args[0])
+        self.assertIn("--match-head-commit", run.call_args_list[1].args[0])
+
+    def test_clean_status_race_does_not_merge_a_changed_pr(self):
+        result = CompletedProcess([], 1, "", "Pull request is in clean status")
+        with patch.object(maintainer.subprocess, "run", return_value=result) as run, \
+                patch.object(maintainer, "reviewed_pr", side_effect=SystemExit("changed")):
+            with self.assertRaisesRegex(SystemExit, "changed"):
+                maintainer.merge_reviewed_pr(self.pr)
+        self.assertEqual(run.call_count, 1)
+
+    def test_unrelated_merge_failure_is_not_retried(self):
+        result = CompletedProcess([], 1, "", "Required checks have not passed")
+        with patch.object(maintainer.subprocess, "run", return_value=result) as run:
+            with self.assertRaisesRegex(SystemExit, "Required checks"):
+                maintainer.merge_reviewed_pr(self.pr)
+        self.assertEqual(run.call_count, 1)
 
 
 if __name__ == "__main__":
