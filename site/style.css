@@ -920,6 +920,26 @@ pre code {
 .guide-content {
   min-width: 0;
 }
+.recorded-demo {
+  margin: 0 0 28px;
+}
+.recorded-demo video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1160 / 525;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.recorded-demo figcaption {
+  margin-top: 13px;
+  color: var(--secondary);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.agent-prompt {
+  margin: 0;
+}
 .guide-content section {
   padding-top: 43px;
   margin-top: 25px;
@@ -946,6 +966,9 @@ pre code {
 }
 .guide-content a {
   color: var(--blue);
+}
+.guide-content a.button.primary {
+  color: #fff;
 }
 .guide-content ul,
 .guide-content ol {

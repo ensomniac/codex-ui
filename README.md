@@ -18,6 +18,8 @@ Desktop control runs locally, without an account, hosted service or telemetry. I
 
 Captured after the released CLI pressed **Mark reviewed** through macOS Accessibility targeting. The page reports its own state; a separate Accessibility inspection confirmed “Reviewed.” [Before image and reproduction](docs/demo.md) · [Try it with your agent](https://ensomniac.github.io/codex-ui/recipes.html#first-run).
 
+[Watch a recorded native action and inspect your existing Chrome session](https://ensomniac.github.io/codex-ui/chrome-session.html) — a runnable walkthrough with screenshots, DOM inspection and copyable commands.
+
 ## Give your agent a task
 
 Paste this into an agent that can run local commands and view images:

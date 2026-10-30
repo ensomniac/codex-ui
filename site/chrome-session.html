@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inspect your existing Chrome session with an AI agent — codex-ui</title>
+    <meta name="description" content="Give a local coding agent screenshots, DOM inspection and native controls in the Chrome session you already use. A recorded macOS demo and copyable commands." />
+    <meta property="og:title" content="Your agent. Your existing Chrome session." />
+    <meta property="og:description" content="Watch a real native action, then inspect your own signed-in Chrome tab with screenshots and DOM evidence. Open-source macOS CLI." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://ensomniac.github.io/codex-ui/chrome-session.html" />
+    <meta property="og:image" content="https://ensomniac.github.io/codex-ui/media/native-click-poster.png" />
+    <meta property="og:image:width" content="2320" />
+    <meta property="og:image:height" content="1050" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": "codex-ui: a real native button press on macOS",
+      "description": "The released codex-ui 2.1.1 CLI presses Mark reviewed through macOS Accessibility. The public Chrome example changes from Not reviewed to Reviewed with one activation.",
+      "thumbnailUrl": "https://ensomniac.github.io/codex-ui/media/native-click-poster.png",
+      "contentUrl": "https://ensomniac.github.io/codex-ui/media/native-click.mp4",
+      "uploadDate": "2026-10-30T15:06:00+00:00",
+      "duration": "PT7.167S",
+      "creator": {
+            "@type": "Organization",
+            "name": "Ensomniac",
+            "url": "https://github.com/ensomniac"
+      }
+}
+    </script>
+    <link rel="canonical" href="https://ensomniac.github.io/codex-ui/chrome-session.html" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css?v=2.1.1&amp;rev=chrome-1" />
+    <script src="site.js?v=2.1.1&amp;rev=chrome-1" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="./" aria-label="codex-ui home"><img src="icon.svg" width="28" height="28" alt="" /><span>codex-ui</span></a>
+        <nav aria-label="Main navigation"><a href="recipes.html">Tasks</a><a href="guide.html">Guide</a><a class="nav-install" href="./#install">Install</a></nav>
+      </div>
+    </header>
+    <div class="shell guide-layout">
+      <aside class="guide-sidebar">
+        <p>Chrome, already open</p>
+        <nav aria-label="On this page"><a href="#demo">Watch a native action</a><a href="#give-your-agent">Give your agent the task</a><a href="#inspect-a-tab">Inspect a tab</a><a href="#choose-your-tool">When to use it</a></nav>
+      </aside>
+      <main class="guide-content" id="main">
+        <div class="guide-title">
+          <p class="overline">Computer use on your Mac</p>
+          <h1>Inspect your existing<br />Chrome session.</h1>
+          <p>Your coding agent can work with the page you already have open, including a signed-in dashboard or a local development page.</p>
+          <p>codex-ui is a free, MIT-licensed local CLI. It combines screenshots, macOS Accessibility controls, and Chrome DOM inspection. Native desktop control requires macOS 13+.</p>
+        </div>
+
+        <section id="demo" aria-labelledby="demo-title">
+          <h2 id="demo-title">A real native action.</h2>
+          <figure class="recorded-demo">
+            <video controls playsinline muted preload="metadata" poster="media/native-click-poster.png" aria-label="Recorded codex-ui native click changes the public example to Reviewed">
+              <source src="media/native-click.mp4" type="video/mp4" />
+              <source src="media/native-click.webm" type="video/webm" />
+              <track kind="captions" src="media/native-click.vtt" srclang="en" label="English" default />
+              <p><a href="media/native-click.mp4">Download the recorded demo.</a></p>
+            </video>
+            <figcaption>Recorded on macOS with the released codex-ui 2.1.1 CLI. Only the public example is in frame. The page starts at “Not reviewed,” then a native button press changes it to “Reviewed” with one activation.</figcaption>
+          </figure>
+          <p><a href="media/native-click.json">Recording details and artifact hashes</a>. The command used in the recording:</p>
+          <div class="code-block"><pre><code id="chrome-demo-command">codex-ui press --chrome-url '?demo=chrome-session' \
+  --role button --name 'Mark reviewed' --capture-after</code></pre><button class="copy-button" type="button" data-copy="chrome-demo-command" hidden>Copy command</button></div>
+          <p><a href="./?demo=chrome-session">Open the same public example</a> in Chrome to try it. This recording shows an actual desktop operation; the interactive example itself reports only browser state. <a href="start.md">First-run setup and permissions</a>.</p>
+        </section>
+
+        <section id="give-your-agent" aria-labelledby="task-title">
+          <h2 id="task-title">Give your agent the task.</h2>
+          <p>Replace <strong>[page URL]</strong> with a page you want inspected. Paste this into a local agent that can run commands and view images:</p>
+          <div class="code-block"><p class="agent-prompt" id="chrome-agent-task">Use codex-ui to inspect [page URL] in my existing Chrome session. If setup is needed, read https://ensomniac.github.io/codex-ui/start.md. Resolve the exact tab, capture and inspect the visible page, then read the relevant live DOM. Report up to three useful findings with screenshots and page evidence. Keep this task to inspection, and tell me what you could not verify.</p><button class="copy-button" type="button" data-copy="chrome-agent-task" data-copy-kind="Task" hidden>Copy task</button></div>
+          <p>The CLI also ships a <a href="https://github.com/ensomniac/codex-ui/blob/main/skills/control-local-ui/SKILL.md">control-local-ui skill</a> for agents. Run <code>codex-ui skill install</code> for Codex, or <code>codex-ui skill install --agent claude</code> for Claude. Other local agents can use the command schema.</p>
+        </section>
+
+        <section id="inspect-a-tab" aria-labelledby="inspect-title">
+          <h2 id="inspect-title">Inspect a tab yourself.</h2>
+          <p>Install through the <a href="guide.html#install">setup guide</a>, run <code>codex-ui doctor</code>, and open the intended page in Chrome. Replace <code>example.com/dashboard</code> with a distinctive literal part of its URL.</p>
+          <h3>1. Capture what is visible</h3>
+          <div class="code-block"><pre><code id="chrome-capture-command">codex-ui capture --chrome-url 'example.com/dashboard' \
+  --focus --label dashboard-before</code></pre><button class="copy-button" type="button" data-copy="chrome-capture-command" hidden>Copy command</button></div>
+          <p>Open the returned <code>capture.path</code> and inspect the image. The neighboring JSON sidecar records the actual screen rectangle and Retina scale. Keep the window visible and unobscured.</p>
+          <h3>2. Read the live page structure</h3>
+          <div class="code-block"><pre><code id="chrome-dom-command">codex-ui chrome-dom --chrome-url 'example.com/dashboard' \
+  --selector 'main' --depth 2 --node-limit 80
+codex-ui chrome-console --chrome-url 'example.com/dashboard' \
+  --level error</code></pre><button class="copy-button" type="button" data-copy="chrome-dom-command" hidden>Copy commands</button></div>
+          <p>Choose a selector present on your page. DOM output includes visible text, attributes and rectangles. Console output reflects the entries exposed by DevTools and its current filters. An unreadable or empty result does not establish that the page has no errors.</p>
+          <h3>3. Connect the findings to the page</h3>
+          <p>Check that the returned URL, title and visible controls belong to the intended tab. Describe the observed problem and its location. If you later authorize a change, repeat the capture and relevant inspection to check its effect.</p>
+          <div class="guide-callout"><p>A URL selector can also match a <code>file://</code> page. If several tabs match, narrow the URL fragment or use an explicit <code>--occurrence</code>. The CLI reports ambiguity instead of choosing a window for you.</p></div>
+        </section>
+
+        <section id="choose-your-tool" aria-labelledby="choice-title">
+          <h2 id="choice-title">Use it where the current session matters.</h2>
+          <p>codex-ui fits inspection of a dashboard you are already signed in to, visual verification of a local UI fix, and tasks that cross between Chrome and native Mac windows. Browser tests remain useful for repeatable checks in a test-controlled browser.</p>
+          <p>Chrome inspection temporarily uses the current tab’s DevTools surface, then restores its layout and clipboard. It does not require relaunching Chrome with a debugging port or enabling JavaScript from Apple Events.</p>
+          <p>Desktop operations run locally without tool telemetry or a hosted account. Your agent host controls how it handles screenshots and command output. Review those artifacts before sharing them.</p>
+          <div class="inline-links"><a class="button primary" href="recipes.html#signed-in">Try the inspection task</a><a class="text-link" href="guide.html">Read the full guide <span aria-hidden="true">→</span></a></div>
+        </section>
+      </main>
+    </div>
+    <p class="task-copy-status" id="copy-message" role="status" aria-live="polite"></p>
+    <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="./">codex-ui</a><p>MIT licensed. By Ensomniac. Independent of OpenAI and Apple.</p><a href="https://github.com/ensomniac/codex-ui">GitHub ↗</a></div></footer>
+  </body>
+</html>

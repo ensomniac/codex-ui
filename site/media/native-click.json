@@ -1,0 +1,35 @@
+{
+  "recorded_date": "2026-10-30",
+  "cli_version": "2.1.1",
+  "browser": "Google Chrome 156.0.8078.74",
+  "platform": "macOS 27.0.1, Apple Silicon",
+  "command": [
+    "codex-ui",
+    "press",
+    "--chrome-url",
+    "?demo=chrome-session",
+    "--role",
+    "button",
+    "--name",
+    "Mark reviewed",
+    "--capture-after"
+  ],
+  "source_page": "https://ensomniac.github.io/codex-ui/?demo=chrome-session",
+  "scope": "Only the public example; browser chrome and account information outside the captured region",
+  "before": {
+    "page_state": "not_reviewed",
+    "activations": 0
+  },
+  "after": {
+    "page_state": "reviewed",
+    "activations": 1
+  },
+  "processing": "Screen region recorded directly with macOS screencapture and its click indicators; H.264 and VP9 encoding at 24 fps and 1160 pixels wide; no speed change or compositing",
+  "duration_seconds": 7.166667,
+  "audio": false,
+  "sha256": {
+    "native-click.mp4": "359bed7ce6e885714ab062b3478a59ee0a82023fd50d3884b6dfb488fad4532f",
+    "native-click-poster.png": "bd9d61e20c1374bfc2a88df9eb7281d50a0e8950bf488e1d2c29d579d8c7a88f",
+    "native-click.webm": "f9fb18ead5670d8fd4fec1f365648b268a3a7db7babb6e2d4c6cd0f438f26a9f"
+  }
+}
