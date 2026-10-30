@@ -3,7 +3,6 @@ import importlib.util
 import io
 import json
 from pathlib import Path
-import re
 import unittest
 from unittest import mock
 
