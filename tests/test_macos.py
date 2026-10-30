@@ -28,6 +28,57 @@ class ChromeSemanticPressTests(unittest.TestCase):
         self.assertEqual(result["activation"], "accessibility_frame_click")
 
 
+class ChromeAccessibilityInitializationTests(unittest.TestCase):
+    def test_cold_chrome_requests_complete_page_accessibility(self):
+        rect = codex_ui.Rect(0, 0, 1000, 800)
+        window = codex_ui.WindowInfo(1, 10, "Google Chrome", "Demo", rect, 0, 0, True)
+        ready = False
+
+        def ax_value(element, attribute, default=None):
+            nonlocal ready
+            if element == "app" and attribute == codex_ui.AS.kAXRoleAttribute:
+                ready = True
+                return "AXApplication"
+            if element == "app" and attribute == codex_ui.AS.kAXWindowsAttribute:
+                return ["window"] if ready else []
+            if attribute == "AXEnhancedUserInterface":
+                return ready
+            return default
+
+        with mock.patch.object(codex_ui.AS, "AXUIElementCreateApplication", return_value="app"), \
+                mock.patch.object(codex_ui, "ax_get", side_effect=ax_value), \
+                mock.patch.object(codex_ui, "ax_frame", return_value=rect):
+            self.assertEqual(codex_ui.ax_window_for(window), "window")
+
+    def test_complete_mode_accepts_readback_and_waits_for_chrome_debounce(self):
+        window = codex_ui.WindowInfo(1, 10, "Google Chrome", "Demo", codex_ui.Rect(0, 0, 100, 100),
+                                    0, 0, True)
+        with mock.patch.object(codex_ui.AS, "AXUIElementCreateApplication", return_value="app"), \
+                mock.patch.object(codex_ui, "ax_get", side_effect=["AXApplication", False, True]), \
+                mock.patch.object(codex_ui.AS, "AXUIElementSetAttributeValue", return_value=-25208) as set_value, \
+                mock.patch.object(codex_ui.time, "sleep") as sleep:
+            self.assertEqual(codex_ui.ax_application_for(window), "app")
+        set_value.assert_called_once_with("app", "AXEnhancedUserInterface", True)
+        sleep.assert_called_once_with(2.1)
+
+    def test_complete_mode_failure_is_reported_without_inspecting_partial_tree(self):
+        window = codex_ui.WindowInfo(1, 10, "Google Chrome", "Demo", codex_ui.Rect(0, 0, 100, 100),
+                                    0, 0, True)
+        with mock.patch.object(codex_ui.AS, "AXUIElementCreateApplication", return_value="app"), \
+                mock.patch.object(codex_ui, "ax_get", side_effect=["AXApplication", False, False]), \
+                mock.patch.object(codex_ui.AS, "AXUIElementSetAttributeValue", return_value=-25208):
+            with self.assertRaisesRegex(codex_ui.UIControlError, "complete page Accessibility"):
+                codex_ui.ax_window_for(window)
+
+    def test_other_native_apps_do_not_receive_chrome_initialization(self):
+        window = codex_ui.WindowInfo(1, 10, "Terminal", "Demo", codex_ui.Rect(0, 0, 100, 100),
+                                    0, 0, True)
+        with mock.patch.object(codex_ui.AS, "AXUIElementCreateApplication", return_value="app"), \
+                mock.patch.object(codex_ui, "ax_get") as get:
+            self.assertEqual(codex_ui.ax_application_for(window), "app")
+        get.assert_not_called()
+
+
 class GeometryTests(unittest.TestCase):
     def test_rect_handles_negative_display_coordinates(self) -> None:
         rect = codex_ui.Rect(-3008, 0, 3008, 1692)
@@ -244,10 +295,17 @@ class ChromeTests(unittest.TestCase):
         )
         target = codex_ui.ResolvedTarget(stale_window, requested)
         focused = object()
+        initialized = False
 
         def ax_value(_element: object, attribute: str, default: object = None) -> object:
+            nonlocal initialized
+            if attribute == codex_ui.AS.kAXRoleAttribute:
+                initialized = True
+                return "AXApplication"
+            if attribute == "AXEnhancedUserInterface":
+                return True
             if attribute == codex_ui.AS.kAXFocusedWindowAttribute:
-                return focused
+                return focused if initialized else None
             if attribute == codex_ui.AS.kAXTitleAttribute:
                 return "Frames"
             if attribute == "AXDocument":
@@ -288,6 +346,8 @@ class ChromeTests(unittest.TestCase):
         focused = object()
 
         def ax_value(_element: object, attribute: str, default: object = None) -> object:
+            if attribute == "AXEnhancedUserInterface":
+                return True
             if attribute == codex_ui.AS.kAXFocusedWindowAttribute:
                 return focused
             if attribute == "AXDocument":

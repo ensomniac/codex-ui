@@ -2,9 +2,9 @@
 class CodexUi < Formula
   desc "Native desktop control for agents"
   homepage "https://ensomniac.github.io/codex-ui/"
-  url "https://github.com/ensomniac/codex-ui/releases/download/v2.1.0/ensomniac_codex_ui-2.1.0-py3-none-any.whl", using: :nounzip
-  sha256 "2f1b3b7ca91d597e18b5dd3769b27c2bb5ceed4337784b2d504a9cec91f322a5"
-  version "2.1.0"
+  url "https://github.com/ensomniac/codex-ui/releases/download/v2.1.1/ensomniac_codex_ui-2.1.1-py3-none-any.whl", using: :nounzip
+  sha256 "20a71320a50864f5acb797e95aa76cbdc37c84993426810eacee7c4c5b1527e9"
+  version "2.1.1"
   license "MIT"
   depends_on :macos
   on_macos do
@@ -45,7 +45,7 @@ class CodexUi < Formula
     resources.each do |r|
       r.stage { wheel_dir.install Dir["*.whl"] }
     end
-    wheel_dir.install buildpath/"ensomniac_codex_ui-2.1.0-py3-none-any.whl"
+    wheel_dir.install buildpath/"ensomniac_codex_ui-2.1.1-py3-none-any.whl"
     system Formula["uv"].opt_bin/"uv", "pip", "install", "--offline", "--no-deps", "--python", libexec/"bin/python", *Dir[wheel_dir/"*.whl"]
     (bin/"codex-ui").write <<~SH
       #!/bin/sh
@@ -55,7 +55,7 @@ class CodexUi < Formula
   end
 
   test do
-    assert_match "codex-ui 2.1.0", shell_output("#{bin}/codex-ui --version")
+    assert_match "codex-ui 2.1.1", shell_output("#{bin}/codex-ui --version")
     assert_match '"desktop_supported": true', shell_output("#{bin}/codex-ui capabilities")
   end
 end

@@ -288,7 +288,7 @@ def activate_chrome_target(target: ResolvedTarget) -> None:
     ]
     selected = select_occurrence(matches, None, "activated Chrome tab")
     target.chrome_tab = selected
-    app = AS.AXUIElementCreateApplication(target.window.pid)
+    app = ax_application_for(target.window)
     focused = ax_get(app, AS.kAXFocusedWindowAttribute)
     if focused is None:
         raise UIControlError("Chrome did not expose the activated window as focused")
@@ -676,8 +676,27 @@ def ax_actions(element: Any) -> tuple[str, ...]:
     return tuple(str(action) for action in actions) if error == AS.kAXErrorSuccess else ()
 
 
-def ax_window_for(window: WindowInfo) -> Any:
+def ax_application_for(window: WindowInfo) -> Any:
     app = AS.AXUIElementCreateApplication(window.pid)
+    if window.app == "Google Chrome":
+        # The app role initializes Chromium's basic native tree. Complete mode
+        # also exposes page actions such as AXPress that basic mode can omit.
+        ax_get(app, AS.kAXRoleAttribute)
+        attribute = "AXEnhancedUserInterface"
+        if not ax_get(app, attribute, False):
+            error = AS.AXUIElementSetAttributeValue(app, attribute, True)
+            # AppKit can report an unsupported write after Chrome accepts it.
+            if error != AS.kAXErrorSuccess and not ax_get(app, attribute, False):
+                raise UIControlError(
+                    f"Chrome did not enable complete page Accessibility (error {error})"
+                )
+            # Chromium debounces this request for two seconds before enabling it.
+            time.sleep(2.1)
+    return app
+
+
+def ax_window_for(window: WindowInfo) -> Any:
+    app = ax_application_for(window)
     candidates = ax_get(app, AS.kAXWindowsAttribute, ()) or ()
     ranked: list[tuple[float, Any]] = []
     for candidate in candidates:
