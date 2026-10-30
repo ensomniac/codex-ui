@@ -4,7 +4,7 @@ const AxeBuilder = require("@axe-core/playwright").default;
 for (const width of [320, 390, 768, 1440]) {
   test(`home, tasks and guide remain readable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    for (const route of ["/", "/recipes.html", "/guide.html"]) {
+    for (const route of ["/", "/recipes.html", "/guide.html", "/chrome-session.html"]) {
       await page.goto(route);
       expect(
         await page.evaluate(
@@ -169,14 +169,14 @@ test("internal guide anchors and local assets resolve", async ({
   page,
   request,
 }) => {
-  for (const route of ["/", "/recipes.html", "/guide.html"]) {
+  for (const route of ["/", "/recipes.html", "/guide.html", "/chrome-session.html"]) {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(route);
     const links = await page
-      .locator('a[href],img[src],link[rel="stylesheet"],script[src]')
+      .locator('a[href],img[src],link[rel="stylesheet"],script[src],source[src],track[src],video[poster]')
       .evaluateAll((nodes) =>
-        nodes.map((node) => node.href || node.src).filter(Boolean),
+        nodes.map((node) => node.href || node.src || node.poster).filter(Boolean),
       );
     for (const value of new Set(links)) {
       const url = new URL(value);
@@ -190,4 +190,39 @@ test("internal guide anchors and local assets resolve", async ({
     }
     expect(errors).toEqual([]);
   }
+});
+
+test("Chrome walkthrough is discoverable, playable and gives a complete agent task", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+  await page.getByRole("link", { name: "Inspect your existing Chrome session" }).click();
+  await expect(page).toHaveURL(/chrome-session\.html$/);
+  await page.getByRole("button", { name: "Copy task", exact: true }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    await page.locator("#chrome-agent-task").innerText(),
+  );
+  const video = page.locator("video");
+  await video.evaluate((element) => element.play());
+  await expect.poll(() => video.evaluate((element) => element.currentTime)).toBeGreaterThan(0.5);
+  expect(await video.evaluate((element) => element.duration)).toBeCloseTo(7.167, 1);
+  await video.evaluate((element) => element.pause());
+  const description = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  expect(description["@type"]).toBe("VideoObject");
+  expect(description.contentUrl).toBe("https://ensomniac.github.io/codex-ui/media/native-click.mp4");
+  expect(description.duration).toBe("PT7.167S");
+  expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toBe(
+    "https://ensomniac.github.io/codex-ui/chrome-session.html",
+  );
+});
+
+test("Chrome walkthrough and video description remain useful without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("http://127.0.0.1:4198/chrome-session.html");
+  await expect(page.locator("#chrome-agent-task")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Copy task" })).toHaveCount(0);
+  await expect(page.locator("video")).toHaveAttribute("controls", "");
+  await expect(page.locator("video")).not.toHaveAttribute("autoplay");
+  await expect(page.locator("figcaption")).toContainText("one activation");
+  await context.close();
 });

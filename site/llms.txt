@@ -11,6 +11,7 @@ Founding principle: "maximum efficiency at the highest risk." Execute authorized
 - Agent entry point: https://github.com/ensomniac/codex-ui/blob/main/AGENTS.md
 - Install and upgrade: https://github.com/ensomniac/codex-ui/blob/main/docs/install.md
 - Human guide: https://ensomniac.github.io/codex-ui/guide.html
+- Existing Chrome session walkthrough and recorded native action: https://ensomniac.github.io/codex-ui/chrome-session.html
 - Command guide: https://github.com/ensomniac/codex-ui/blob/main/docs/commands.md
 - Agent skill: https://github.com/ensomniac/codex-ui/blob/main/skills/control-local-ui/SKILL.md
 - Contribution and trusted approval: https://github.com/ensomniac/codex-ui/blob/main/docs/governance.md

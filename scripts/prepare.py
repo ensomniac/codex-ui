@@ -5,7 +5,8 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE_FILES = ("README.md", "docs/install.md", "site/index.html", "site/guide.html", "site/recipes.html")
+RELEASE_FILES = ("README.md", "docs/install.md", "site/index.html", "site/guide.html",
+                 "site/recipes.html", "site/chrome-session.html")
 
 
 def release_references(text: str, version: str) -> str:
