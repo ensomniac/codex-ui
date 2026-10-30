@@ -27,7 +27,7 @@ codex-ui doctor
 codex-ui displays
 codex-ui windows --app 'Google Chrome' --title 'codex-ui Playground'
 codex-ui capture --chrome-url 'codex-ui/examples/playground.html' --label before
-codex-ui inspect --chrome-url 'codex-ui/examples/playground.html' --search Market --all
+codex-ui inspect --chrome-url 'codex-ui/examples/playground.html' --search Message --all
 codex-ui press --chrome-url 'codex-ui/examples/playground.html' \
   --role button --name 'Activate demo' --capture-after
 codex-ui chrome-console --chrome-url 'codex-ui/examples/playground.html' --level error
@@ -36,6 +36,9 @@ codex-ui chrome-dom --chrome-url 'codex-ui/examples/playground.html' \
 codex-ui window-set --chrome-url 'codex-ui/examples/playground.html' \
   --preset right-half --display 3 --margin 12
 ```
+
+With the playground open in Chrome, `inspect` should return the **Message**
+text field and its label. The following `press` command activates **Activate demo**.
 
 Target selectors fail closed when ambiguous. Narrow the application/title/URL,
 or explicitly pass the 1-based `--occurrence`.
@@ -65,6 +68,35 @@ codex-ui click --capture $HOME/screenshots/screen_example.jpg --pixel 800 600
 Every screenshot has a neighboring `.json` sidecar with its global point
 rectangle, pixel dimensions, Retina scale, target, and timestamp. That makes a
 pixel selected from an inspected image deterministic on any display layout.
+
+## Capturing a window, display, or region
+
+Use `windows` to find a window's ID and `rect_points`, or `displays` to find
+each display's 1-based `index` and global `rect_points`. Choose the capture
+scope explicitly:
+
+```sh
+codex-ui capture --chrome-url 'codex-ui/examples/playground.html' --focus --label playground
+codex-ui displays
+codex-ui capture --display 1 --label display
+codex-ui capture --region -1200 100 800 600 --label public-region
+```
+
+The first command focuses and captures the matching Chrome window. `--display`
+captures the entire selected display; `--region X Y W H` captures a rectangle
+in global screen points. Region coordinates can be negative on displays to
+the left of or above the main display. Replace the example rectangle with
+coordinates from your own window or display geometry. These are screen
+coordinates, not a crop relative to a window or Retina image pixels.
+
+Display and region captures run before window resolution. Combining either
+with a window selector or `--focus` does not focus that window; focus it with
+a separate `codex-ui focus` command first if needed.
+
+Use the returned `capture.metadata_path` sidecar as the source for the actual
+captured rectangle, image dimensions, and point-to-pixel scale. Inspect the
+image at `capture.path` before sharing it: even a correct rectangle can show
+another visible app if the desktop changed.
 
 ## Moving and resizing windows
 
