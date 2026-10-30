@@ -19,14 +19,27 @@ def reviewed_pr(number: int, head: str, base: str | None = None) -> dict:
     return pr
 
 
+def is_pr_run(run: dict, pr: dict) -> bool:
+    if run["event"] != "pull_request" or run["head_sha"] != pr["head"]["sha"]:
+        return False
+    links = run.get("pull_requests") or []
+    if links:
+        return any(item["number"] == pr["number"] for item in links)
+    # GitHub can omit PR links for fork runs, including held first-time builds.
+    # Require the exact source repository and branch as well as the event/SHA.
+    repo_id = (pr["head"].get("repo") or {}).get("id")
+    branch = pr["head"].get("ref")
+    return (repo_id is not None and bool(branch)
+            and (run.get("head_repository") or {}).get("id") == repo_id
+            and run.get("head_branch") == branch)
+
+
 def ensure_ci(pr: dict) -> None:
     """Start a held, reviewed PR build and wait for that PR's own CI result."""
     head = pr["head"]["sha"]
     result = gh_api(f"repos/{REPO}/actions/workflows/ci.yml/runs"
                     f"?event=pull_request&head_sha={head}&per_page=100")
-    runs = [run for run in result["workflow_runs"]
-            if run["event"] == "pull_request" and run["head_sha"] == head
-            and any(item["number"] == pr["number"] for item in run["pull_requests"])]
+    runs = [run for run in result["workflow_runs"] if is_pr_run(run, pr)]
     if not runs:
         raise SystemExit("The reviewed PR has no CI run yet; retry after GitHub creates it")
     run = max(runs, key=lambda item: item["id"])
@@ -50,6 +63,20 @@ def ensure_ci(pr: dict) -> None:
         if time.monotonic() >= deadline:
             raise SystemExit(f"CI is still pending; resume this review later: {run['html_url']}")
         time.sleep(5)
+
+
+def merge_reviewed_pr(pr: dict) -> None:
+    args = ["gh", "pr", "merge", str(pr["number"]), "--repo", REPO,
+            "--squash", "--match-head-commit", pr["head"]["sha"]]
+    result = subprocess.run(args + ["--auto"], capture_output=True, text=True)
+    if not result.returncode:
+        return
+    if "Pull request is in clean status" in result.stderr:
+        # Trusted verification can finish before gh enables auto-merge.
+        reviewed_pr(pr["number"], pr["head"]["sha"], pr["base"]["sha"])
+        subprocess.run(args, check=True)
+        return
+    raise SystemExit(result.stderr.strip() or "Could not enable PR auto-merge")
 
 
 def main() -> None:
@@ -81,8 +108,7 @@ def main() -> None:
                     "--ref", "main", "-f", f"pr={args.number}"], check=True)
     print(f"Approved {REPO}#{args.number} at {args.head}; trusted verification queued.")
     if args.merge:
-        subprocess.run(["gh", "pr", "merge", str(args.number), "--repo", REPO,
-                        "--squash", "--auto", "--match-head-commit", args.head], check=True)
+        merge_reviewed_pr(pr)
 
 
 if __name__ == "__main__":
