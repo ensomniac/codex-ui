@@ -3,7 +3,7 @@ class CodexUi < Formula
   desc "Native desktop control for agents"
   homepage "https://ensomniac.github.io/codex-ui/"
   url "https://github.com/ensomniac/codex-ui/releases/download/v2.1.1/ensomniac_codex_ui-2.1.1-py3-none-any.whl", using: :nounzip
-  sha256 "a5ecbf030956119711dc86bec6e29587234175d449740ba596972060918b6a6e"
+  sha256 "20a71320a50864f5acb797e95aa76cbdc37c84993426810eacee7c4c5b1527e9"
   version "2.1.1"
   license "MIT"
   depends_on :macos
