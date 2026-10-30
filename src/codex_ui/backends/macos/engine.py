@@ -679,9 +679,19 @@ def ax_actions(element: Any) -> tuple[str, ...]:
 def ax_application_for(window: WindowInfo) -> Any:
     app = AS.AXUIElementCreateApplication(window.pid)
     if window.app == "Google Chrome":
-        # Chromium enables native page accessibility when an AT reads the app role.
-        # Reading only AXWindows can otherwise leave the page tree unavailable.
+        # The app role initializes Chromium's basic native tree. Complete mode
+        # also exposes page actions such as AXPress that basic mode can omit.
         ax_get(app, AS.kAXRoleAttribute)
+        attribute = "AXEnhancedUserInterface"
+        if not ax_get(app, attribute, False):
+            error = AS.AXUIElementSetAttributeValue(app, attribute, True)
+            # AppKit can report an unsupported write after Chrome accepts it.
+            if error != AS.kAXErrorSuccess and not ax_get(app, attribute, False):
+                raise UIControlError(
+                    f"Chrome did not enable complete page Accessibility (error {error})"
+                )
+            # Chromium debounces this request for two seconds before enabling it.
+            time.sleep(2.1)
     return app
 
 

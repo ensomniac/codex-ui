@@ -2,10 +2,11 @@
 
 ## 2.1.1 — 2026-10-30
 
-- Initialize Chrome's native page Accessibility tree before window inspection or tab activation, so semantic controls work without another assistive client enabling them first.
+- Initialize Chrome's complete page Accessibility tree before window inspection or tab activation, so semantic controls work without another assistive client enabling them first.
 - Explain missing Python inspection example arguments with usage and help, preserving valid URL fragments and JSON behavior.
 - Correct the playground inspection command and document window, display, and global-region captures.
 - Update the pinned GitHub Actions used by CI, releases, and trusted review.
+- Recognize held fork CI runs with missing PR metadata and handle trusted verification finishing before auto-merge is enabled.
 
 ## 2.1.0 — 2026-09-10
 
